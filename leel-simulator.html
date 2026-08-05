@@ -317,6 +317,9 @@
     80%{transform:translateX(6px);}
   }
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 </head>
 <body>
 
@@ -689,17 +692,79 @@ function collectDefaults(){
 }
 let DEFAULTS = null; // captured once on first load, before restoring saved state
 
+// ---------- Firebase 실시간 동기화 (부부 공유용) ----------
+const firebaseConfig = {
+  apiKey: "AIzaSyBVdTdoxx3yyjFK-sqAHtoKTd6HiyoYm18",
+  authDomain: "leel-sim.firebaseapp.com",
+  databaseURL: "https://leel-sim-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "leel-sim",
+  storageBucket: "leel-sim.firebasestorage.app",
+  messagingSenderId: "555789776207",
+  appId: "1:555789776207:web:44c56d4a2df08f9229c13a"
+};
+const SHARED_PATH = 'leelSim/sharedState';
+let fbRef = null;
+let fbAuthReady = false; // 익명 로그인 완료 여부 (완료 전에는 읽기/쓰기 시도 안 함)
+let isApplyingRemoteUpdate = false; // 원격(상대방) 변경을 적용하는 동안 다시 쏘지 않도록 막는 플래그
+
+try{
+  firebase.initializeApp(firebaseConfig);
+  fbRef = firebase.database().ref(SHARED_PATH);
+  firebase.auth().onAuthStateChanged(user=>{
+    if(user){
+      fbAuthReady = true;
+      initFirebaseSync(); // 로그인 완료된 뒤에만 실시간 구독 시작
+    }
+  });
+  firebase.auth().signInAnonymously().catch(err=>{
+    console.warn('익명 로그인 실패', err);
+    setSyncIndicator('⚠️ 인증 실패 · 이 폰에만 저장됨', false);
+  });
+}catch(e){
+  console.warn('Firebase 초기화 실패, 로컬 저장만 사용합니다.', e);
+}
+
+function setSyncIndicator(text, ok){
+  const ind = $('saveIndicator');
+  if(!ind) return;
+  ind.textContent = text;
+  ind.style.color = ok ? 'var(--good)' : 'var(--warn)';
+  ind.classList.add('show');
+  clearTimeout(window._saveTimer);
+  window._saveTimer = setTimeout(()=>ind.classList.remove('show'), 2200);
+}
+
+// 저장된 state 객체 하나를 실제 화면(입력칸들)에 반영
+function applyStateData(data){
+  if(!data) return;
+  if(data.inputs){
+    INPUT_IDS.forEach(id => { if(id in data.inputs) $(id).value = data.inputs[id]; });
+  }
+  if(Array.isArray(data.brackets) && data.brackets.length){
+    brackets = data.brackets.map(b => ({
+      cap: b.cap === null ? Infinity : b.cap,
+      rate: b.rate, ded: b.ded
+    }));
+  }
+  if(data.rateApplied){
+    rateAppliedInfo = data.rateApplied;
+  }
+}
+
 function saveState(){
   const data = { inputs:{}, brackets, rateApplied: rateAppliedInfo };
   INPUT_IDS.forEach(id => data.inputs[id] = $(id).value);
   try{
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    const ind = $('saveIndicator');
-    ind.textContent = '저장됨 · ' + new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
-    ind.classList.add('show');
-    clearTimeout(window._saveTimer);
-    window._saveTimer = setTimeout(()=>ind.classList.remove('show'), 1600);
   }catch(e){ /* storage unavailable, ignore */ }
+
+  if(fbRef && fbAuthReady && !isApplyingRemoteUpdate){
+    fbRef.set(data)
+      .then(()=> setSyncIndicator('☁️ 동기화됨 · ' + new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}), true))
+      .catch(()=> setSyncIndicator('⚠️ 동기화 실패(오프라인?) · 이 폰에만 저장됨', false));
+  } else if(!fbRef || !fbAuthReady){
+    setSyncIndicator('저장됨(이 폰에만) · ' + new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}), true);
+  }
 }
 
 function loadState(){
@@ -708,20 +773,29 @@ function loadState(){
   if(!raw) return false;
   try{
     const data = JSON.parse(raw);
-    if(data.inputs){
-      INPUT_IDS.forEach(id => { if(id in data.inputs) $(id).value = data.inputs[id]; });
-    }
-    if(Array.isArray(data.brackets) && data.brackets.length){
-      brackets = data.brackets.map(b => ({
-        cap: b.cap === null ? Infinity : b.cap,
-        rate: b.rate, ded: b.ded
-      }));
-    }
-    if(data.rateApplied){
-      rateAppliedInfo = data.rateApplied;
-    }
+    applyStateData(data);
     return true;
   }catch(e){ return false; }
+}
+
+// 상대방 폰에서 값이 바뀌면 실시간으로 이 화면에도 반영
+function initFirebaseSync(){
+  if(!fbRef) return;
+  fbRef.on('value', snapshot => {
+    const data = snapshot.val();
+    if(!data) return; // 아직 아무도 저장한 적 없으면 로컬 기본값 유지
+    isApplyingRemoteUpdate = true;
+    applyStateData(data);
+    renderRateNote();
+    updateHoldingPeriod();
+    formatAllMoneyInputs();
+    recalc();
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch(e){}
+    setSyncIndicator('☁️ 상대방 변경사항 반영됨', true);
+    isApplyingRemoteUpdate = false;
+  }, ()=>{
+    setSyncIndicator('⚠️ 실시간 동기화 연결 실패', false);
+  });
 }
 
 const CURRENT_RATE_HIGH = 2.95; // 5대 시중은행 12개월 정기예금 평균금리 상단 (2026년 7월 기준, 은행연합회 공시)
@@ -1073,10 +1147,11 @@ function recalc(){
 }
 
 DEFAULTS = collectDefaults();   // capture the example values baked into the HTML
-loadState();                     // then overwrite with anything saved from before
+loadState();                     // then overwrite with anything saved from before (오프라인 캐시)
 renderRateNote();                // reflect restored "현재금리 입력" state, if any
 updateHoldingPeriod();           // 준공일/기준일자 기준 보유·거주기간 초기 계산
 formatAllMoneyInputs();          // 금액 입력칸 콤마 서식 적용
+// initFirebaseSync()는 익명 로그인이 완료된 뒤(onAuthStateChanged)에 자동으로 호출됩니다
 
 INPUT_IDS.forEach(id=>{
   $(id).addEventListener('input', ()=>{
