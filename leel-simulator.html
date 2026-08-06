@@ -777,9 +777,19 @@ function saveState(){
   }catch(e){ /* storage unavailable, ignore */ }
 
   if(fbRef && fbAuthReady && !isApplyingRemoteUpdate){
-    fbRef.set(data)
-      .then(()=> setSyncIndicator('☁️ 동기화됨 · ' + new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}), true))
-      .catch(()=> setSyncIndicator('⚠️ 동기화 실패(오프라인?) · 이 폰에만 저장됨', false));
+    // Firebase는 Infinity/NaN 값을 저장하면 즉시 오류를 던지므로, 과세표준구간표의
+    // 마지막 "초과" 행(cap:Infinity)을 null로 바꿔서 보냄 (불러올 때 다시 Infinity로 복원)
+    const fbData = {
+      ...data,
+      brackets: brackets.map(b => ({...b, cap: b.cap === Infinity ? null : b.cap}))
+    };
+    try{
+      fbRef.set(fbData)
+        .then(()=> setSyncIndicator('☁️ 동기화됨 · ' + new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}), true))
+        .catch(err=> setSyncIndicator('⚠️ 동기화 실패: ' + (err && err.code ? err.code : '오프라인?'), false));
+    }catch(err){
+      setSyncIndicator('⚠️ 동기화 오류: ' + err.message, false);
+    }
   } else if(!fbRef || !fbAuthReady){
     setSyncIndicator('저장됨(이 폰에만) · ' + new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}), true);
   }
