@@ -200,6 +200,11 @@
   }
   .field input:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(138,109,69,.14); background:var(--card);}
   .unit{font-size:11px; color:var(--text-soft); flex-shrink:0; white-space:nowrap;}
+  /* 수동으로 직접 입력하는(또는 입력해야 하는) 필드 표시 */
+  .field input.manual-field, .meta-box input.manual-field{
+    background:#EAF1F7; border-color:#B9CEDD;
+  }
+  .field input.manual-field:focus{ background:#F2F7FA; }
 
   .out{
     display:grid; grid-template-columns:1fr auto; align-items:center; gap:10px;
@@ -337,6 +342,10 @@
     <div>
       <div class="eyebrow">Capital Gains &amp; Relocation Fund Simulator</div>
       <div class="sub">보유 주택을 매도해 양도소득세를 낸 뒤, 새 아파트(르엘) 입주에 필요한 자금을 전세와 월세 브릿지 방식으로 조달할 때 어느 쪽이 유리한지 계산합니다. 모든 값은 직접 수정할 수 있습니다.</div>
+      <div class="sub" style="margin-top:8px; display:flex; align-items:center; gap:6px;">
+        <span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#EAF1F7; border:1px solid #B9CEDD;"></span>
+        파란빛 배경 = 직접 입력하는(또는 수동으로 고정한) 값 · 나머지는 자동계산됨
+      </div>
     </div>
     <div class="save-indicator" id="saveIndicator">자동 저장됨</div>
   </header>
@@ -354,7 +363,7 @@
       <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
         <button class="mini-btn" onclick="autoCalcClosingCosts()" type="button"><span class="btn-icon">⟳</span>취득세·등기비·인지세 자동계산</button>
       </div>
-      <div class="field"><label>잔금</label><span class="field-value"><input type="text" inputmode="numeric" id="balance" value="215700"><span class="unit">만원</span></span></div>
+      <div class="field"><label>잔금</label><span class="field-value"><input type="text" inputmode="numeric" class="manual-field" id="balance" value="215700"><span class="unit">만원</span></span></div>
       <div class="field"><label>취득세</label><span class="field-value"><input type="text" inputmode="numeric" id="acqTax" value="7866"><span class="unit">만원</span></span></div>
       <div class="field"><label>등기비</label><span class="field-value"><input type="text" inputmode="numeric" id="regFee" value="2800"><span class="unit">만원</span></span></div>
       <div class="field"><label>인지세</label><span class="field-value"><input type="text" inputmode="numeric" id="stampTax" value="800"><span class="unit">만원</span></span></div>
@@ -376,11 +385,11 @@
       <div>
         <div class="field-group">
           <h3>거래 기본 정보</h3>
-          <div class="field"><label>취득가액 (매입가)</label><span class="field-value"><input type="text" inputmode="numeric" id="acqPrice" value="67000"><span class="unit">만원</span></span></div>
-          <div class="field"><label>양도가액 (매도가)</label><span class="field-value"><input type="text" inputmode="numeric" id="salePrice" value="170000"><span class="unit">만원</span></span></div>
-          <div class="field"><label>필요경비<small class="block-note" style="color:var(--soft-text)">(취득세·법무사비·중개수수료·자본적지출(샷시·발코니확장·보일러교체 등))</small></label><span class="field-value"><input type="text" inputmode="numeric" id="necExpense" value="1700"><span class="unit">만원</span></span></div>
-          <div class="field"><label>비과세한도</label><span class="field-value"><input type="text" inputmode="numeric" id="taxFreeLimit" value="120000"><span class="unit">만원</span></span></div>
-          <div class="field"><label>준공일(취득일)</label><span class="field-value"><input type="text" id="acqDate" value="2022-10-31" style="width:96px; text-align:right;"></span></div>
+          <div class="field"><label>취득가액 (매입가)</label><span class="field-value"><input type="text" inputmode="numeric" class="manual-field" id="acqPrice" value="67000"><span class="unit">만원</span></span></div>
+          <div class="field"><label>양도가액 (매도가)</label><span class="field-value"><input type="text" inputmode="numeric" class="manual-field" id="salePrice" value="170000"><span class="unit">만원</span></span></div>
+          <div class="field"><label>필요경비<small class="block-note" style="color:var(--soft-text)">(취득세·법무사비·중개수수료·자본적지출(샷시·발코니확장·보일러교체 등))</small></label><span class="field-value"><input type="text" inputmode="numeric" class="manual-field" id="necExpense" value="1700"><span class="unit">만원</span></span></div>
+          <div class="field"><label>비과세한도</label><span class="field-value"><input type="text" inputmode="numeric" class="manual-field" id="taxFreeLimit" value="120000"><span class="unit">만원</span></span></div>
+          <div class="field"><label>준공일(취득일)</label><span class="field-value"><input type="text" class="manual-field" id="acqDate" value="2022-10-31" style="width:96px; text-align:right;"></span></div>
           <div class="field"><label>보유기간<small id="holdYearsHint">자동계산됨</small></label><span class="field-value"><input type="number" id="holdYears" value="6"><span class="unit">년</span></span></div>
           <div class="field"><label>거주기간<small id="resideYearsHint">자동계산됨</small></label><span class="field-value"><input type="number" id="resideYears" value="6"><span class="unit">년</span></span></div>
           <details class="basis-toggle"><summary>근거</summary><div class="closing-note" id="holdingPeriodNote"></div></details>
@@ -434,14 +443,14 @@
       <div class="section-note">매도대금 외에 이미 확보되었거나 확보 가능한 자금을 정리합니다.</div>
     </div>
     <div class="field-group">
-      <div class="field"><label>계약금</label><span class="field-value"><input type="text" inputmode="numeric" id="deposit" value="10785"><span class="unit">만원</span></span></div>
-      <div class="field"><label>현금</label><span class="field-value"><input type="text" inputmode="numeric" id="cash" value="29000"><span class="unit">만원</span></span></div>
-      <div class="field"><label>입사일</label><span class="field-value"><input type="text" id="hireDate" value="2000-06-25" style="width:96px; text-align:right;"></span></div>
-      <div class="field"><label>현재 월급<small>(세전 기본급 기준)</small></label><span class="field-value"><input type="text" inputmode="numeric" id="monthlySalary" value="500"><span class="unit">만원</span></span></div>
-      <div class="field"><label>회사 대여금<small>(퇴직금에서 차감)</small></label><span class="field-value"><input type="text" inputmode="numeric" id="companyLoan" value="1500"><span class="unit">만원</span></span></div>
+      <div class="field"><label>계약금</label><span class="field-value"><input type="text" inputmode="numeric" class="manual-field" id="deposit" value="10785"><span class="unit">만원</span></span></div>
+      <div class="field"><label>현금</label><span class="field-value"><input type="text" inputmode="numeric" class="manual-field" id="cash" value="29000"><span class="unit">만원</span></span></div>
+      <div class="field"><label>입사일</label><span class="field-value"><input type="text" class="manual-field" id="hireDate" value="2000-06-25" style="width:96px; text-align:right;"></span></div>
+      <div class="field"><label>현재 월급<small>(세전 기본급 기준)</small></label><span class="field-value"><input type="text" inputmode="numeric" class="manual-field" id="monthlySalary" value="500"><span class="unit">만원</span></span></div>
+      <div class="field"><label>회사 대여금<small>(퇴직금에서 차감)</small></label><span class="field-value"><input type="text" inputmode="numeric" class="manual-field" id="companyLoan" value="1500"><span class="unit">만원</span></span></div>
       <div class="field"><label>퇴직금<small id="severanceHint">(세후−대여금, 자동계산)</small><button class="mini-btn" style="margin-left:6px;" onclick="autoCalcSeverance()" type="button"><span class="btn-icon">⟳</span>자동계산</button></label><span class="field-value"><input type="text" inputmode="numeric" id="severance" value="8000"><span class="unit">만원</span></span></div>
       <details class="basis-toggle"><summary>근거</summary><div class="closing-note" id="severanceNote">입사일과 현재 월급을 입력한 뒤 자동계산을 누르면, 근속연수 비례 퇴직금(세전)에서 퇴직소득세와 회사 대여금을 뺀 실수령액이 채워집니다.</div></details>
-      <div class="field"><label>기타 매도자금</label><span class="field-value"><input type="text" inputmode="numeric" id="otherSale" value="3000"><span class="unit">만원</span></span></div>
+      <div class="field"><label>기타 매도자금</label><span class="field-value"><input type="text" inputmode="numeric" class="manual-field" id="otherSale" value="3000"><span class="unit">만원</span></span></div>
       <div class="out total"><label>조달자금 합계</label><span class="val" id="oSum2">-</span></div>
     </div>
   </div>
@@ -474,15 +483,15 @@
     <div class="meta-box">
       <div>
         <label>기준일자</label>
-        <input type="text" id="baseDate" value="2025-10-14">
+        <input type="text" class="manual-field" id="baseDate" value="2025-10-14">
       </div>
       <div>
         <label>년이자율</label>
-        <span class="meta-value"><input type="number" step="0.01" id="rate" value="2.9"><span class="meta-unit">%</span></span>
+        <span class="meta-value"><input type="number" step="0.01" class="manual-field" id="rate" value="2.9"><span class="meta-unit">%</span></span>
       </div>
       <div>
         <label>브릿지개월수</label>
-        <span class="meta-value"><input type="number" id="months" value="24"><span class="meta-unit">개월</span></span>
+        <span class="meta-value"><input type="number" class="manual-field" id="months" value="24"><span class="meta-unit">개월</span></span>
       </div>
     </div>
     <div class="rate-source" id="rateSourceNote" style="text-align:left; max-width:none; margin-top:14px;">
@@ -505,7 +514,7 @@
       <div>
         <div class="mini-card">
           <h4>전세일 때</h4>
-          <div class="field"><label>전세가</label><span class="field-value"><input type="text" inputmode="numeric" id="jeonseAmt" value="49625"><span class="unit">만원</span></span></div>
+          <div class="field"><label>전세가</label><span class="field-value"><input type="text" inputmode="numeric" class="manual-field" id="jeonseAmt" value="49625"><span class="unit">만원</span></span></div>
           <div class="out"><label>전세경비<small class="block-note" style="color:var(--soft-text)">(전세가 × 이자율 × 기간(기회비용))</small></label><span class="val accent" id="oJeonseCost">-</span></div>
         </div>
         <div class="mini-card">
@@ -517,8 +526,8 @@
       <div>
         <div class="mini-card">
           <h4>월세일 때</h4>
-          <div class="field"><label>월세보증금</label><span class="field-value"><input type="text" inputmode="numeric" id="monthlyDeposit" value="2000"><span class="unit">만원</span></span></div>
-          <div class="field"><label>월세가</label><span class="field-value"><input type="text" inputmode="numeric" id="monthlyRent" value="185"><span class="unit">만원</span></span></div>
+          <div class="field"><label>월세보증금</label><span class="field-value"><input type="text" inputmode="numeric" class="manual-field" id="monthlyDeposit" value="2000"><span class="unit">만원</span></span></div>
+          <div class="field"><label>월세가</label><span class="field-value"><input type="text" inputmode="numeric" class="manual-field" id="monthlyRent" value="185"><span class="unit">만원</span></span></div>
           <div class="out"><label>월세경비<small class="block-note" style="color:var(--soft-text)">(월세×기간 − 보증금기회비용)</small></label><span class="val accent" id="oMonthlyCost">-</span></div>
         </div>
         <div class="mini-card">
@@ -700,8 +709,35 @@ function setSyncIndicator(text, ok){
   window._saveTimer = setTimeout(()=>ind.classList.remove('show'), 1800);
 }
 
+// 자동계산 함수들이 값을 넣을 때 공통으로 거치는 통로
+let manualEdits = {}; // {필드id: true}
+// 시작할 때 일괄실행용: 수동 수정된 필드는 건너뜀(그대로 보존)
+function setAutoValue(id, value){
+  if(manualEdits[id]) return false;
+  $(id).value = value;
+  return true;
+}
+// 자동계산 버튼을 직접 눌렀을 때용: 무조건 반영하고, "수동 고정" 표시를 풀어서
+// 다음 시작부터는 다시 자동으로 최신값을 따라가게 함(마지막 실행이 자동이었다는 뜻이므로)
+function forceAutoValue(id, value){
+  $(id).value = value;
+  manualEdits[id] = false;
+  return true;
+}
+
+// 자동계산 대상 필드 6개: 지금 "수동으로 고정된" 상태면 배경색을 수동입력 필드와 같은 색으로 표시
+const AUTO_CALC_IDS = ['acqTax','regFee','stampTax','brokerFee','basicDeduction','severance'];
+function updateManualFieldStyling(){
+  AUTO_CALC_IDS.forEach(id=>{
+    const el = $(id);
+    if(!el) return;
+    el.classList.toggle('manual-field', !!manualEdits[id]);
+  });
+}
+
+
 function saveState(){
-  const data = { inputs:{}, brackets, rateApplied: rateAppliedInfo };
+  const data = { inputs:{}, brackets, rateApplied: rateAppliedInfo, manualEdits };
   INPUT_IDS.forEach(id => data.inputs[id] = $(id).value);
   try{
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -726,6 +762,9 @@ function loadState(){
     }
     if(data.rateApplied){
       rateAppliedInfo = data.rateApplied;
+    }
+    if(data.manualEdits){
+      manualEdits = data.manualEdits;
     }
     return true;
   }catch(e){ return false; }
@@ -765,7 +804,8 @@ function applyCurrentRate(){
 }
 
 // 취득세 / 등기비 / 인지세 자동계산 (1세대1주택, 국민주택규모 초과 기준 추정치)
-function autoCalcClosingCosts(){
+function autoCalcClosingCosts(fromStartup){
+  const put = fromStartup ? setAutoValue : forceAutoValue;
   const P = num('deposit') + num('balance'); // 총 매매가(만원) = 계약금 + 잔금
 
   // 취득세: 6억 이하 1.1% / 6~9억 구간 1.1~3.5% 선형 / 9억 초과 3.5% (지방교육세·농특세 포함 추정 실효세율)
@@ -787,9 +827,10 @@ function autoCalcClosingCosts(){
   else if(P <= 100000) stampCalc = 15;
   else stampCalc = 35;
 
-  $('acqTax').value = acqTaxCalc.toLocaleString('ko-KR');
-  $('regFee').value = regFeeCalc.toLocaleString('ko-KR');
-  $('stampTax').value = stampCalc.toLocaleString('ko-KR');
+  put('acqTax', acqTaxCalc.toLocaleString('ko-KR'));
+  put('regFee', regFeeCalc.toLocaleString('ko-KR'));
+  put('stampTax', stampCalc.toLocaleString('ko-KR'));
+  updateManualFieldStyling();
 
   $('closingCostNote').innerHTML =
     `총 매매가 ${fmtEok(P)} 기준 자동계산됨 (취득세 실효세율 약 ${acqRate.toFixed(2)}%) · 1세대1주택·국민주택규모 초과 가정 추정치이니 실제 고지서·법무사 정산서로 확인하세요.`;
@@ -799,7 +840,8 @@ function autoCalcClosingCosts(){
 }
 
 // 중개보수(복비) 자동계산: 매매 중개보수 상한요율표(전국 표준, 시·도 조례상 유사) 기준
-function autoCalcBrokerFee(){
+function autoCalcBrokerFee(fromStartup){
+  const put = fromStartup ? setAutoValue : forceAutoValue;
   const V = num('salePrice'); // 양도가액(만원)
   let rate, cap;
   if(V < 5000){ rate = 0.6; cap = 25; }
@@ -813,7 +855,8 @@ function autoCalcBrokerFee(){
   if(cap !== null) fee = Math.min(fee, cap);
   fee = Math.round(fee);
 
-  $('brokerFee').value = fee.toLocaleString('ko-KR');
+  put('brokerFee', fee.toLocaleString('ko-KR'));
+  updateManualFieldStyling();
   $('brokerFeeNote').innerHTML =
     `양도가액 ${fmtEok(V)} 기준 매매 중개보수 상한요율 ${rate}%${cap!==null? ' (한도 '+cap+'만원)':''} 적용, 자동계산됨(부가세 별도) · 시·도 조례에 따라 다를 수 있으니 실제 협의 금액으로 수정하세요.`;
 
@@ -823,7 +866,8 @@ function autoCalcBrokerFee(){
 
 // 양도소득 기본공제 자동계산: 원칙 연 250만원(소득세법§103).
 // 2026.8.3 세제개편안: 10년 이상 거주 + 양도가액 30억원 이하 1세대1주택은 2500만원로 확대(2027.1.1 양도분부터, 초과분은 해당 주택 양도소득에서만 공제)
-function autoCalcBasicDeduction(){
+function autoCalcBasicDeduction(fromStartup){
+  const put = fromStartup ? setAutoValue : forceAutoValue;
   const baseYear = (() => { const d = new Date($('baseDate').value); return isNaN(d) ? new Date().getFullYear() : d.getFullYear(); })();
   const resideYears = num('resideYears');
   const salePrice = num('salePrice');
@@ -836,7 +880,8 @@ function autoCalcBasicDeduction(){
     basis = '10년 이상 거주 + 양도가액 30억원 이하 1세대1주택 확대 기본공제 적용(2026.8.3 세제개편안, 2027.1.1 이후 양도분부터. 초과분은 해당 주택 양도소득에서만 공제)';
   }
 
-  $('basicDeduction').value = amount.toLocaleString('ko-KR');
+  put('basicDeduction', amount.toLocaleString('ko-KR'));
+  updateManualFieldStyling();
   $('basicDeductionNote').innerHTML =
     `${basis} · 기준일자 ${baseYear}년, 거주기간 ${resideYears}년, 양도가액 ${fmtEok(salePrice)} 기준으로 판정됨.`;
 
@@ -847,7 +892,8 @@ function autoCalcBasicDeduction(){
 // 세후 퇴직금 자동계산
 // 1) 퇴직금(세전) ≈ 현재 월급 × 근속연수(일할, 1개월 단위 비례)
 // 2) 퇴직소득세: 근속연수공제 → 환산급여 → 환산급여공제 → 과세표준 → (위 과세표준구간표 세율 적용) → 12/근속연수 환산 → 지방소득세 10% 가산
-function autoCalcSeverance(){
+function autoCalcSeverance(fromStartup){
+  const put = fromStartup ? setAutoValue : forceAutoValue;
   const hire = new Date($('hireDate').value);
   const base = new Date($('baseDate').value);
   if(isNaN(hire) || isNaN(base) || hire > base){
@@ -894,7 +940,8 @@ function autoCalcSeverance(){
   const loan = num('companyLoan'); // 회사 대여금(사내대출 등, 퇴직금에서 차감)
   const finalSeverance = Math.max(netSeverance - loan, 0);
 
-  $('severance').value = Math.round(finalSeverance).toLocaleString('ko-KR');
+  put('severance', Math.round(finalSeverance).toLocaleString('ko-KR'));
+  updateManualFieldStyling();
 
   $('severanceNote').innerHTML =
     `입사일 ${$('hireDate').value} → 기준일자 ${$('baseDate').value}, 근속 약 ${exactYears.toFixed(1)}년(공제계산은 ${serviceYears}년) · `+
@@ -903,6 +950,14 @@ function autoCalcSeverance(){
 
   recalc();
   saveState();
+}
+
+// 시작할 때 자동계산 4종을 한꺼번에 실행 (단, 사용자가 손으로 직접 고친 필드는 건드리지 않음)
+function runAllAutoCalc(){
+  autoCalcClosingCosts(true);
+  autoCalcBrokerFee(true);
+  autoCalcBasicDeduction(true);
+  autoCalcSeverance(true);
 }
 
 function renderBracketTable(activeIdx){
@@ -1084,9 +1139,13 @@ loadState();                     // then overwrite with anything saved from befo
 renderRateNote();                // reflect restored "현재금리 입력" state, if any
 updateHoldingPeriod();           // 준공일/기준일자 기준 보유·거주기간 초기 계산
 formatAllMoneyInputs();          // 금액 입력칸 콤마 서식 적용
+runAllAutoCalc();                // 취득세·중개보수·기본공제·퇴직금 자동계산 일괄 실행(수동수정 필드는 건너뜀)
+updateManualFieldStyling();      // 수동 고정된 자동계산 필드에 배경색 표시
 
 INPUT_IDS.forEach(id=>{
   $(id).addEventListener('input', ()=>{
+    manualEdits[id] = true; // 사용자가 직접 타이핑한 필드로 표시 → 다음부턴 자동계산이 덮어쓰지 않음
+    updateManualFieldStyling();
     if(id==='rate' && rateAppliedInfo){
       rateAppliedInfo = null;   // 사용자가 직접 수정하면 "현재금리 적용됨" 표시는 해제
       renderRateNote();
