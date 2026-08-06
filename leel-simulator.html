@@ -769,6 +769,7 @@ function applyStateData(data){
   }
 }
 
+let fbWriteTimer = null;
 function saveState(){
   const data = { inputs:{}, brackets, rateApplied: rateAppliedInfo };
   INPUT_IDS.forEach(id => data.inputs[id] = $(id).value);
@@ -777,19 +778,24 @@ function saveState(){
   }catch(e){ /* storage unavailable, ignore */ }
 
   if(fbRef && fbAuthReady && !isApplyingRemoteUpdate){
-    // Firebase는 Infinity/NaN 값을 저장하면 즉시 오류를 던지므로, 과세표준구간표의
-    // 마지막 "초과" 행(cap:Infinity)을 null로 바꿔서 보냄 (불러올 때 다시 Infinity로 복원)
-    const fbData = {
-      ...data,
-      brackets: brackets.map(b => ({...b, cap: b.cap === Infinity ? null : b.cap}))
-    };
-    try{
-      fbRef.set(fbData)
-        .then(()=> setSyncIndicator('☁️ 동기화됨 · ' + new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}), true))
-        .catch(err=> setSyncIndicator('⚠️ 동기화 실패: ' + (err && err.code ? err.code : '오프라인?'), false));
-    }catch(err){
-      setSyncIndicator('⚠️ 동기화 오류: ' + err.message, false);
-    }
+    // 타이핑마다 바로 쏘지 않고, 입력이 잠시 멈춘 뒤(0.6초) 한 번만 전송
+    // → 상대방에게 되돌아오는 에코가 타이핑 중인 값을 덮어쓰는 걸 줄여줌
+    clearTimeout(fbWriteTimer);
+    fbWriteTimer = setTimeout(()=>{
+      // Firebase는 Infinity/NaN 값을 저장하면 즉시 오류를 던지므로, 과세표준구간표의
+      // 마지막 "초과" 행(cap:Infinity)을 null로 바꿔서 보냄 (불러올 때 다시 Infinity로 복원)
+      const fbData = {
+        ...data,
+        brackets: brackets.map(b => ({...b, cap: b.cap === Infinity ? null : b.cap}))
+      };
+      try{
+        fbRef.set(fbData)
+          .then(()=> setSyncIndicator('☁️ 동기화됨 · ' + new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}), true))
+          .catch(err=> setSyncIndicator('⚠️ 동기화 실패: ' + (err && err.code ? err.code : '오프라인?'), false));
+      }catch(err){
+        setSyncIndicator('⚠️ 동기화 오류: ' + err.message, false);
+      }
+    }, 600);
   } else if(!fbRef || !fbAuthReady){
     setSyncIndicator('저장됨(이 폰에만) · ' + new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}), true);
   }
@@ -812,6 +818,12 @@ function initFirebaseSync(){
   fbRef.on('value', snapshot => {
     const data = snapshot.val();
     if(!data) return; // 아직 아무도 저장한 적 없으면 로컬 기본값 유지
+    // 지금 사용자가 입력칸에 값을 타이핑 중이면, 그 입력이 끝날 때까지 원격 갱신을 미룸
+    // (매 키 입력마다 저장→에코가 돌아오면서 타이핑 중인 값을 덮어써버리는 걸 방지)
+    if(document.activeElement && document.activeElement.tagName === 'INPUT'){
+      pendingRemoteData = data;
+      return;
+    }
     isApplyingRemoteUpdate = true;
     applyStateData(data);
     renderRateNote();
@@ -825,6 +837,27 @@ function initFirebaseSync(){
     setSyncIndicator('⚠️ 실시간 동기화 연결 실패', false);
   });
 }
+
+let pendingRemoteData = null; // 타이핑 중 도착한 원격 갱신을 잠시 보관
+function applyPendingRemoteDataIfAny(){
+  if(!pendingRemoteData) return;
+  const data = pendingRemoteData;
+  pendingRemoteData = null;
+  isApplyingRemoteUpdate = true;
+  applyStateData(data);
+  renderRateNote();
+  updateHoldingPeriod();
+  formatAllMoneyInputs();
+  recalc();
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch(e){}
+  setSyncIndicator('☁️ 상대방 변경사항 반영됨', true);
+  isApplyingRemoteUpdate = false;
+}
+document.addEventListener('focusout', e=>{
+  if(e.target && e.target.tagName === 'INPUT'){
+    setTimeout(applyPendingRemoteDataIfAny, 50); // 다음 입력칸으로 포커스가 옮겨간 경우까지 감안해 살짝 지연
+  }
+});
 
 const CURRENT_RATE_HIGH = 2.95; // 5대 시중은행 12개월 정기예금 평균금리 상단 (2026년 7월 기준, 은행연합회 공시)
 let rateAppliedInfo = null; // {value, date} — "현재금리 입력" 버튼을 누른 시점 기록
