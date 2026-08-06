@@ -841,8 +841,8 @@ function pullLatestFromFirebase(isInitialLoad){
       setSyncIndicator(isInitialLoad ? '☁️ 최신 공유값 불러옴' : '☁️ 최신값으로 갱신됨', true);
       isApplyingRemoteUpdate = false;
     })
-    .catch(()=>{
-      setSyncIndicator('⚠️ 불러오기 실패(오프라인?)', false);
+    .catch(err=>{
+      setSyncIndicator('⚠️ 불러오기 실패: ' + (err && err.code ? err.code : (err && err.message ? err.message : '알수없음')), false);
     });
 }
 
