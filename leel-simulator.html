@@ -114,7 +114,10 @@
   .opt-figure.deficit{color:var(--warn);}
   .opt-figure.surplus{color:var(--good-deep);}
   .opt-figure-tag{font-size:13px; font-weight:500; margin-left:8px; font-family:'Noto Sans KR',sans-serif; color:var(--text-soft);}
-  .opt-sum{font-size:12px; color:var(--text-soft); margin-top:12px; line-height:1.8;}
+  .opt-sum{font-size:12px; color:var(--text-soft); margin-top:12px; line-height:1.9;}
+  .opt-sum div{display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:2px;}
+  .opt-sum div span{flex-shrink:0;}
+  .opt-sum b{text-align:right;}
   .opt-sum b{color:var(--text); font-family:'IBM Plex Mono', monospace; font-weight:600;}
 
   .stamp{
@@ -521,7 +524,13 @@
       </label>
     </div>
     <div id="depositFileStatus" style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--text-soft); margin-top:8px;"></div>
-    <div class="closing-note" style="margin-top:12px;">예금금리를 정리해둔 엑셀(.xlsx) 또는 CSV 파일을 올리면, 최고금리가 가장 높은 은행·상품을 찾아 기준일자·년이자율에 자동으로 적용합니다. 열 제목에 "은행", "상품", "최고금리"(없으면 "기본금리"나 "금리"), "날짜"가 포함되어 있으면 자동으로 인식합니다.)</div>
+    <div id="depositRateDropdownWrap" style="margin-top:10px; display:none;">
+      <label style="display:block; font-size:10.5px; color:var(--text-soft); margin-bottom:4px;">상위 10개 중 선택 (탭하여 변경)</label>
+      <select id="depositRateOptionsSelect" onchange="selectDepositRateOption(this.value)"
+        style="width:100%; font-family:'IBM Plex Mono',monospace; font-size:12.5px; padding:8px 10px; border:1px solid var(--line); border-radius:7px; background:var(--card-alt); color:var(--text);">
+      </select>
+    </div>
+    <div class="closing-note" style="margin-top:12px;">예금금리를 정리해둔 엑셀(.xlsx) 또는 CSV 파일을 올리면, 금리가 높은 순으로 최대 10개를 골라 위 목록에서 고를 수 있게 하고, 그중 1위를 기준일자·년이자율에 자동으로 적용합니다. 목록에서 다른 상품을 탭하면 언제든 바꿀 수 있어요. 열 제목에 "은행", "상품", "최고금리"(없으면 "기본금리"나 "금리"), "날짜"가 포함되어 있으면 자동으로 인식합니다.)</div>
   </div>
 
   <!-- SECTION 6: 브릿지 -->
@@ -576,7 +585,10 @@
       <div class="opt-title">전세로 살다 입주할 경우</div>
       <div class="opt-figure" id="needJeonse">0</div>
       <div class="opt-sum">
-        필요자금 합계 <b id="sJ1">-</b> · 세후 매도수익 <b id="sJ2">-</b> · 조달자금 <b id="sJ3">-</b> · 전세기간 이자수익 <b id="sJ4">-</b>
+        <div><span>필요자금 합계</span><b id="sJ1">-</b></div>
+        <div><span>세후 매도수익</span><b id="sJ2">-</b></div>
+        <div><span>조달자금</span><b id="sJ3">-</b></div>
+        <div><span>전세기간 이자수익</span><b id="sJ4">-</b></div>
       </div>
     </div>
     <div class="opt wolse">
@@ -585,7 +597,10 @@
       <div class="opt-title">월세로 살다 입주할 경우</div>
       <div class="opt-figure" id="needWolse">0</div>
       <div class="opt-sum">
-        필요자금 합계 <b id="sW1">-</b> · 세후 매도수익 <b id="sW2">-</b> · 조달자금 <b id="sW3">-</b> · 월세기간 실제이자수익 <b id="sW4">-</b>
+        <div><span>필요자금 합계</span><b id="sW1">-</b></div>
+        <div><span>세후 매도수익</span><b id="sW2">-</b></div>
+        <div><span>조달자금</span><b id="sW3">-</b></div>
+        <div><span>월세기간 실제이자수익</span><b id="sW4">-</b></div>
       </div>
     </div>
   </div>
@@ -595,41 +610,17 @@
     <div class="section-head">
       <div class="section-head-top">
         <div class="section-num">07</div>
-        <div class="section-title">잔금대출로 부족액을 빌렸을 때 이자</div>
+        <div class="section-title">잔금 부족액 대출 이자</div>
       </div>
-      <div class="section-note">필요자금이 모자라 잔금대출을 받는다면, 시중 제1금융권 평균금리 기준으로 분양권 잔금대출과 주택담보대출 각각 매월·매년·3년 총이자가 얼마인지 함께 보여줍니다.</div>
+      <div class="section-note">필요자금이 모자라 잔금대출을 받는다면, 시중 제1금융권 평균금리 기준으로 매월·매년·3년 총이자가 얼마인지 보여줍니다.<br>(천만원단위로 절상+2천만원)</div>
     </div>
 
-    <div class="field-group">
-      <div class="field"><label>대출원금<small id="loanPrincipalHint">(추천안 부족액 기준, 자동계산)</small><button class="mini-btn" style="margin-left:6px;" onclick="autoCalcLoanPrincipal()" type="button"><span class="btn-icon">⟳</span>자동계산</button></label><span class="field-value"><input type="text" inputmode="numeric" id="loanPrincipal" value="0"><span class="unit">만원</span></span></div>
+    <div class="field-group" style="max-width:380px;">
+      <div class="field"><label>대출원금<button class="mini-btn" style="margin-left:6px;" onclick="autoCalcLoanPrincipal()" type="button"><span class="btn-icon">⟳</span>자동계산</button></label><span class="field-value"><input type="text" inputmode="numeric" id="loanPrincipal" value="0"><span class="unit">만원</span></span></div>
       <details class="basis-toggle"><summary>근거</summary><div class="closing-note" id="loanPrincipalNote"></div></details>
     </div>
 
-    <div class="field-group">
-      <div class="meta-box">
-        <div>
-          <label>분양권 잔금대출 금리</label>
-          <span class="meta-value"><input type="number" step="0.01" id="loanRatePresale" value="7.1"><span class="meta-unit">%</span></span>
-        </div>
-        <div>
-          <label>적용 금융기관</label>
-          <input type="text" class="manual-field" id="loanBankPresale" value="" placeholder="예: OO은행">
-        </div>
-      </div>
-      <div class="rate-source" style="text-align:left; max-width:none; margin-top:14px;">
-        기준: 2026년 7~8월 제1금융권(시중은행) 신규취급 평균 연 7.1%(분양권 잔금대출/집단대출 추정)<br>
-        <a href="https://portal.kfb.or.kr/compare/loan_search.php" target="_blank" rel="noopener">은행연합회에서 최신 대출금리 확인 →</a>
-      </div>
-      <div style="margin-top:14px;">
-        <label class="reset-btn" style="cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
-          <span class="btn-icon">📄</span>분양권 금리파일 불러오기
-          <input type="file" id="loanFilePresale" accept=".csv,.xlsx,.xls" style="display:none;" onchange="handleLoanRateFile(event,'presale')">
-        </label>
-      </div>
-      <div id="loanFileStatusPresale" style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--text-soft); margin-top:8px;"></div>
-    </div>
-
-    <div class="field-group" style="margin-top:20px;">
+    <div class="field-group" style="max-width:420px;">
       <div class="meta-box">
         <div>
           <label>주택담보대출 금리</label>
@@ -637,11 +628,12 @@
         </div>
         <div>
           <label>적용 금융기관</label>
-          <input type="text" class="manual-field" id="loanBankMortgage" value="" placeholder="예: OO은행">
+          <input type="text" class="manual-field" id="loanBankMortgage" value="" placeholder="예: OO은행" style="width:100px;">
         </div>
       </div>
       <div class="rate-source" style="text-align:left; max-width:none; margin-top:14px;">
         기준: 2026년 7~8월 제1금융권(시중은행) 신규취급 평균 연 6.9%<br>
+        <a href="https://portal.kfb.or.kr/compare/loan_search.php" target="_blank" rel="noopener">은행연합회에서 최신 대출금리 확인 →</a><br>
         <a href="https://finlife.fss.or.kr/finlife/ldng/houseMrtg/list.do?menuNo=700007" target="_blank" rel="noopener">금융감독원 금융상품한눈에에서 확인 →</a>
       </div>
       <div style="margin-top:14px;">
@@ -651,25 +643,23 @@
         </label>
       </div>
       <div id="loanFileStatusMortgage" style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--text-soft); margin-top:8px;"></div>
-      <div class="closing-note" style="margin-top:12px;">은행별 대출금리를 정리해둔 엑셀(.xlsx) 또는 CSV 파일을 올리면, 최저금리인 은행·금리를 찾아 자동으로 적용합니다(예금과 반대로 가장 낮은 금리를 고릅니다). 열 제목에 "은행", "최저금리"(없으면 "금리")가 포함되어 있으면 자동으로 인식합니다.</div>
+      <div id="loanRateDropdownWrap" style="margin-top:10px; display:none;">
+        <label style="display:block; font-size:10.5px; color:var(--text-soft); margin-bottom:4px;">낮은 순 10개 중 선택 (탭하여 변경)</label>
+        <select id="loanRateOptionsSelect" onchange="selectLoanRateOption(this.value)"
+          style="width:100%; font-family:'IBM Plex Mono',monospace; font-size:12.5px; padding:8px 10px; border:1px solid var(--line); border-radius:7px; background:var(--card-alt); color:var(--text);">
+        </select>
+      </div>
+      <div class="closing-note" style="margin-top:12px;">은행별 대출금리를 정리해둔 엑셀(.xlsx) 또는 CSV 파일을 올리면, 각 은행의 최저금리·최고금리 평균을 구해 낮은 순으로 최대 10개를 골라 위 목록에서 고를 수 있게 하고, 그중 1위(가장 낮은 평균금리)를 자동으로 적용합니다. 목록에서 다른 은행을 탭하면 언제든 바꿀 수 있어요. 열 제목에 "은행", "최저금리", "최고금리"(둘 중 하나만 있어도 그 값으로 계산)가 포함되어 있으면 자동으로 인식합니다.</div>
       <details class="basis-toggle"><summary>근거</summary><div class="closing-note" id="loanRateNote">
-        위 기준값은 2026년 7~8월 조사 시점의 제1금융권 평균이며, 파일을 올리지 않으면 그대로 쓰입니다. 실제 최저금리는 매일 바뀌니 파일 업로드나 아래 링크에서 직접 확인하는 걸 권장합니다.
+        위 기준값은 2026년 7~8월 조사 시점의 제1금융권 평균이며, 파일을 올리지 않으면 그대로 쓰입니다. 실제 최저금리는 매일 바뀌니 파일 업로드나 위 링크에서 직접 확인하는 걸 권장합니다.
       </div></details>
     </div>
 
-    <div class="cols">
-      <div class="mini-card">
-        <h4 id="loanPresaleTitle">분양권 잔금대출 기준</h4>
-        <div class="out"><label>매월 이자</label><span class="val" id="loanPresaleMonthly">-</span></div>
-        <div class="out"><label>매년 이자</label><span class="val" id="loanPresaleAnnual">-</span></div>
-        <div class="out total"><label>3년 총이자</label><span class="val accent" id="loanPresale3Y">-</span></div>
-      </div>
-      <div class="mini-card">
-        <h4 id="loanMortgageTitle">주택담보대출 기준</h4>
-        <div class="out"><label>매월 이자</label><span class="val" id="loanMortgageMonthly">-</span></div>
-        <div class="out"><label>매년 이자</label><span class="val" id="loanMortgageAnnual">-</span></div>
-        <div class="out total"><label>3년 총이자</label><span class="val accent" id="loanMortgage3Y">-</span></div>
-      </div>
+    <div class="mini-card" style="max-width:280px;">
+      <h4 id="loanMortgageTitle">주택담보대출 기준</h4>
+      <div class="out"><label>매월 이자</label><span class="val" id="loanMortgageMonthly">-</span></div>
+      <div class="out"><label>매년 이자</label><span class="val" id="loanMortgageAnnual">-</span></div>
+      <div class="out total"><label>3년 총이자</label><span class="val accent" id="loanMortgage3Y">-</span></div>
     </div>
     <div class="closing-note">이자만 계산한 금액입니다(원금 상환 제외, 거치식 가정). 실제 상품은 거치기간·상환방식에 따라 달라질 수 있습니다.</div>
   </div>
@@ -904,7 +894,7 @@ const INPUT_IDS = ['baseDate','rate','months','acqPrice','salePrice','necExpense
   'acqDate','holdYears','resideYears','basicDeduction','brokerFee','balance','acqTax','regFee','stampTax',
   'hireDate','monthlySalary','companyLoan','deposit','cash','severance','otherSale','jeonseAmt','monthlyDeposit','monthlyRent',
   'hiY1Self','hiY1Spouse','hiY2Self','hiY2Spouse','hiOtherSelf','hiOtherSpouse','hiSpouseProperty','hiSpouseDeposit',
-  'loanPrincipal','loanRatePresale','loanRateMortgage','loanBankPresale','loanBankMortgage'];
+  'loanPrincipal','loanRateMortgage','loanBankMortgage'];
 
 const DEFAULT_BRACKETS = [
   {cap:1400, rate:6, ded:0},
@@ -967,7 +957,7 @@ function updateManualFieldStyling(){
 
 
 function saveState(){
-  const data = { inputs:{}, brackets, rateApplied: rateAppliedInfo, manualEdits, depositApplyInfo };
+  const data = { inputs:{}, brackets, rateApplied: rateAppliedInfo, manualEdits, depositApplyInfo, depositRateOptions, depositSelectedIndex, loanRateOptions, loanSelectedIndex };
   INPUT_IDS.forEach(id => data.inputs[id] = $(id).value);
   try{
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -999,6 +989,18 @@ function loadState(){
     if(data.depositApplyInfo){
       depositApplyInfo = data.depositApplyInfo;
     }
+    if(Array.isArray(data.depositRateOptions)){
+      depositRateOptions = data.depositRateOptions;
+    }
+    if(typeof data.depositSelectedIndex === 'number'){
+      depositSelectedIndex = data.depositSelectedIndex;
+    }
+    if(Array.isArray(data.loanRateOptions)){
+      loanRateOptions = data.loanRateOptions;
+    }
+    if(typeof data.loanSelectedIndex === 'number'){
+      loanSelectedIndex = data.loanSelectedIndex;
+    }
     return true;
   }catch(e){ return false; }
 }
@@ -1006,6 +1008,10 @@ function loadState(){
 const CURRENT_RATE_HIGH = 2.95; // 5대 시중은행 12개월 정기예금 평균금리 상단 (2026년 7월 기준, 은행연합회 공시)
 let rateAppliedInfo = null; // {value, date} — "현재금리 입력" 버튼을 누른 시점 기록
 let depositApplyInfo = null; // {bank, product, rate} — 예금금리 파일에서 마지막으로 적용한 내용(새로 적용되기 전까지 계속 표시)
+let depositRateOptions = []; // 파일에서 뽑은 상위 10개 목록 [{rate,bank,product,date}]
+let depositSelectedIndex = 0; // 그중 지금 선택(적용)된 순번
+let loanRateOptions = []; // 대출금리 낮은 순 상위 10개 목록 [{rate,bank}]
+let loanSelectedIndex = 0; // 그중 지금 선택(적용)된 순번
 
 const DEPOSIT_INFO_KEY = 'reol-fund-sim-deposit-v1'; // 별도 백업 저장(메인 저장과 별개로 이중 보관)
 
@@ -1144,45 +1150,75 @@ function applyBestDepositRate(rows, fileName, statusEl){
     return;
   }
 
-  let best = null;
+  const all = [];
   for(let i=1;i<rows.length;i++){
     const row = rows[i];
     if(!row || row.length===0) continue;
     const rawRate = String(row[rateCol]==null?'':row[rateCol]).replace('%','').trim();
     const rateVal = parseFloat(rawRate);
     if(isNaN(rateVal)) continue;
-    if(!best || rateVal > best.rate){
-      best = {
-        rate: rateVal,
-        bank: bankCol!==-1 ? String(row[bankCol]||'').trim() : '',
-        product: productCol!==-1 ? String(row[productCol]||'').trim() : '',
-        dateRaw: dateCol!==-1 ? row[dateCol] : null
-      };
-    }
+    all.push({
+      rate: rateVal,
+      bank: bankCol!==-1 ? String(row[bankCol]||'').trim() : '',
+      product: productCol!==-1 ? String(row[productCol]||'').trim() : '',
+      dateRaw: dateCol!==-1 ? row[dateCol] : null
+    });
   }
 
-  if(!best){
+  if(!all.length){
     statusEl.textContent = '⚠️ 유효한 금리 숫자를 찾지 못했습니다. 금리 열 값이 숫자(예: 3.2 또는 3.2%)인지 확인해주세요.';
     statusEl.style.color = 'var(--warn)';
     return;
   }
 
-  const normalizedDate = normalizeDateValue(best.dateRaw);
-  if(normalizedDate) $('baseDate').value = normalizedDate;
-  $('rate').value = best.rate;
+  all.sort((a,b)=> b.rate - a.rate);
+  depositRateOptions = all.slice(0,10).map(o => ({
+    rate: o.rate, bank: o.bank, product: o.product,
+    date: normalizeDateValue(o.dateRaw)
+  }));
 
-  const label = [best.bank, best.product].filter(Boolean).join(' ');
-  rateAppliedInfo = {
-    value: best.rate,
-    date: normalizedDate || $('baseDate').value
-  };
-  depositApplyInfo = { bank: best.bank, product: best.product, rate: best.rate };
+  renderDepositRateDropdown();
+  applyDepositRateOption(0); // 1위(최고금리)를 기본으로 적용
+  saveState();
+}
+
+// 상위 10개 목록을 드롭다운으로 그려줌
+function renderDepositRateDropdown(){
+  const wrap = $('depositRateDropdownWrap');
+  const sel = $('depositRateOptionsSelect');
+  if(!wrap || !sel) return;
+  if(!depositRateOptions.length){ wrap.style.display = 'none'; sel.innerHTML = ''; return; }
+  sel.innerHTML = depositRateOptions.map((o,i)=>{
+    const label = [o.bank, o.product].filter(Boolean).join(' ') || '(출처 미상)';
+    return `<option value="${i}">${i+1}위 · ${label} · 연 ${o.rate}%${o.date ? ' · '+o.date : ''}</option>`;
+  }).join('');
+  wrap.style.display = 'block';
+  sel.value = String(depositSelectedIndex);
+}
+
+// 드롭다운에서 특정 순위를 선택했을 때(사용자가 직접 변경)
+function selectDepositRateOption(index){
+  applyDepositRateOption(parseInt(index,10));
+  saveState();
+}
+
+// index번째 옵션을 실제로 기준일자·년이자율에 반영
+function applyDepositRateOption(index){
+  const opt = depositRateOptions[index];
+  if(!opt) return;
+  depositSelectedIndex = index;
+
+  if(opt.date) $('baseDate').value = opt.date;
+  $('rate').value = opt.rate;
+
+  rateAppliedInfo = { value: opt.rate, date: opt.date || $('baseDate').value };
+  depositApplyInfo = { bank: opt.bank, product: opt.product, rate: opt.rate };
   saveDepositInfoBackup();
   renderRateNote();
   renderDepositStatus();
+  renderDepositRateDropdown();
   updateHoldingPeriod();
   recalc();
-  saveState();
 }
 
 // 취득세 / 등기비 / 인지세 자동계산 (1세대1주택, 국민주택규모 초과 기준 추정치)
@@ -1350,13 +1386,16 @@ function autoCalcLoanPrincipal(fromStartup){
   const needJeonse = window.lastNeedJeonse;
   const needMonthly = window.lastNeedMonthly;
   const useJeonse = (needJeonse !== undefined && needMonthly !== undefined) ? (needJeonse <= needMonthly) : true;
-  const need = useJeonse ? needJeonse : needMonthly;
-  const principal = Math.max(Math.round(need||0), 0);
+  const need = Math.max(useJeonse ? needJeonse : needMonthly, 0) || 0;
+
+  // 천만원(=1,000만원) 단위로 절상한 뒤 여유분 2,000만원을 더함
+  const rounded = Math.ceil(need / 1000) * 1000;
+  const principal = rounded + 2000;
 
   put('loanPrincipal', principal.toLocaleString('ko-KR'));
   updateManualFieldStyling();
   $('loanPrincipalNote').textContent =
-    `${useJeonse?'전세':'월세'}안(추천) 기준 필요자금 부족액 ${fmtEok(principal)}을(를) 대출원금으로 가정했습니다. 실제 대출한도(LTV·DSR)와 다를 수 있으니 직접 조정하세요.`;
+    `${useJeonse?'전세':'월세'}안(추천) 기준 필요자금 부족액 ${fmtEok(need)}을(를) 천만원 단위로 절상(${fmtEok(rounded)})한 뒤 2,000만원을 더해 ${fmtEok(principal)}을(를) 대출원금으로 가정했습니다. 실제 대출한도(LTV·DSR)와 다를 수 있으니 직접 조정하세요.`;
 
   calcLoanInterest();
   recalc();
@@ -1420,65 +1459,99 @@ function applyBestLoanRate(rows, fileName, type, statusEl){
   const header = rows[0].map(h=>String(h||'').trim());
   const findCol = keywords => header.findIndex(h => keywords.some(k=>h.includes(k)));
   const bankCol = findCol(['은행','금융기관','기관명','기관']);
-  let rateCol = findCol(['최저금리']);
-  if(rateCol === -1) rateCol = findCol(['금리','이율']);
+  const lowCol = findCol(['최저금리']);
+  const highCol = findCol(['최고금리']);
+  let plainRateCol = -1;
+  if(lowCol === -1 && highCol === -1) plainRateCol = findCol(['금리','이율']);
 
-  if(rateCol === -1){
-    statusEl.textContent = `⚠️ "금리" 열을 찾지 못했습니다. 첫 줄(열 제목)에 "최저금리" 또는 "금리"가 포함된 열이 있는지 확인해주세요. (읽은 열 제목: ${header.join(', ')})`;
+  if(lowCol === -1 && highCol === -1 && plainRateCol === -1){
+    statusEl.textContent = `⚠️ "금리" 열을 찾지 못했습니다. 첫 줄(열 제목)에 "최저금리", "최고금리" 또는 "금리"가 포함된 열이 있는지 확인해주세요. (읽은 열 제목: ${header.join(', ')})`;
     statusEl.style.color = 'var(--warn)';
     return;
   }
 
-  let best = null; // 대출금리는 최저값을 채택(예금과 반대)
+  const all = [];
   for(let i=1;i<rows.length;i++){
     const row = rows[i];
     if(!row || row.length===0) continue;
-    const rawRate = String(row[rateCol]==null?'':row[rateCol]).replace('%','').trim();
-    const rateVal = parseFloat(rawRate);
-    if(isNaN(rateVal)) continue;
-    if(!best || rateVal < best.rate){
-      best = { rate: rateVal, bank: bankCol!==-1 ? String(row[bankCol]||'').trim() : '' };
-    }
+    const readNum = c => { if(c===-1) return null; const v = parseFloat(String(row[c]==null?'':row[c]).replace('%','').trim()); return isNaN(v) ? null : v; };
+    const low = readNum(lowCol);
+    const high = readNum(highCol);
+    const plain = readNum(plainRateCol);
+
+    let rate;
+    if(low!==null && high!==null) rate = (low+high)/2; // 최저·최고 평균
+    else if(low!==null) rate = low;
+    else if(high!==null) rate = high;
+    else if(plain!==null) rate = plain;
+    else continue;
+
+    all.push({ rate, bank: bankCol!==-1 ? String(row[bankCol]||'').trim() : '' });
   }
 
-  if(!best){
+  if(!all.length){
     statusEl.textContent = '⚠️ 유효한 금리 숫자를 찾지 못했습니다. 금리 열 값이 숫자(예: 5.8 또는 5.8%)인지 확인해주세요.';
     statusEl.style.color = 'var(--warn)';
     return;
   }
 
-  const rateId = type==='presale' ? 'loanRatePresale' : 'loanRateMortgage';
-  const bankId = type==='presale' ? 'loanBankPresale' : 'loanBankMortgage';
-  $(rateId).value = best.rate;
-  $(bankId).value = best.bank;
+  all.sort((a,b)=> a.rate - b.rate); // 대출금리는 낮은 순(예금과 반대)
+  loanRateOptions = all.slice(0,10);
 
-  calcLoanInterest();
+  renderLoanRateDropdown();
+  applyLoanRateOption(0); // 1위(가장 낮은 평균금리)를 기본으로 적용
   saveState();
+}
 
-  statusEl.textContent = `✅ ${best.bank || '(출처 미상)'} 연 ${best.rate}% 적용됨(최저금리)`;
+// 낮은 순 상위 10개를 드롭다운으로 그려줌
+function renderLoanRateDropdown(){
+  const wrap = $('loanRateDropdownWrap');
+  const sel = $('loanRateOptionsSelect');
+  if(!wrap || !sel) return;
+  if(!loanRateOptions.length){ wrap.style.display = 'none'; sel.innerHTML = ''; return; }
+  sel.innerHTML = loanRateOptions.map((o,i)=>{
+    const label = o.bank || '(출처 미상)';
+    return `<option value="${i}">${i+1}위 · ${label} · 연 ${o.rate.toFixed(2)}%</option>`;
+  }).join('');
+  wrap.style.display = 'block';
+  sel.value = String(loanSelectedIndex);
+}
+
+// 드롭다운에서 직접 선택했을 때
+function selectLoanRateOption(index){
+  applyLoanRateOption(parseInt(index,10));
+  saveState();
+}
+
+// index번째 옵션을 실제로 주택담보대출 금리·적용 금융기관에 반영
+function applyLoanRateOption(index){
+  const opt = loanRateOptions[index];
+  if(!opt) return;
+  loanSelectedIndex = index;
+
+  $('loanRateMortgage').value = Math.round(opt.rate*100)/100;
+  $('loanBankMortgage').value = opt.bank;
+
+  renderLoanRateDropdown();
+  calcLoanInterest();
+
+  const statusEl = $('loanFileStatusMortgage');
+  statusEl.textContent = `✅ ${opt.bank || '(출처 미상)'} 연 ${opt.rate.toFixed(2)}% 적용됨(최저·최고 평균 기준)`;
   statusEl.style.color = 'var(--good)';
 }
 
 // 대출원금×금리로 매월/매년/3년 이자 계산 (이자만, 원금상환 제외)
 function calcLoanInterest(){
   const principal = num('loanPrincipal');
-  const rPresale = num('loanRatePresale')/100;
   const rMortgage = num('loanRateMortgage')/100;
 
-  const presaleAnnual = principal * rPresale;
   const mortgageAnnual = principal * rMortgage;
-
-  $('loanPresaleMonthly').textContent = fmtEok(presaleAnnual/12);
-  $('loanPresaleAnnual').textContent = fmtEok(presaleAnnual);
-  $('loanPresale3Y').textContent = fmtEok(presaleAnnual*3);
 
   $('loanMortgageMonthly').textContent = fmtEok(mortgageAnnual/12);
   $('loanMortgageAnnual').textContent = fmtEok(mortgageAnnual);
   $('loanMortgage3Y').textContent = fmtEok(mortgageAnnual*3);
 
-  const bankPresale = $('loanBankPresale').value.trim();
   const bankMortgage = $('loanBankMortgage').value.trim();
-  $('loanPresaleTitle').textContent = '분양권 잔금대출 기준' + (bankPresale ? ` · ${bankPresale}` : '');
   $('loanMortgageTitle').textContent = '주택담보대출 기준' + (bankMortgage ? ` · ${bankMortgage}` : '');
 }
 
@@ -1906,6 +1979,8 @@ loadState();                     // then overwrite with anything saved from befo
 loadDepositInfoBackup();         // 별도 백업에서도 복원 시도(메인 저장이 비어있을 때 대비)
 renderRateNote();                // reflect restored "현재금리 입력" state, if any
 renderDepositStatus();           // 복원된 예금금리 파일 적용 상태 표시
+renderDepositRateDropdown();     // 복원된 상위 10개 목록 드롭다운 표시
+renderLoanRateDropdown();        // 복원된 대출금리 낮은순 10개 목록 드롭다운 표시
 updateHoldingPeriod();           // 준공일/기준일자 기준 보유·거주기간 초기 계산
 formatAllMoneyInputs();          // 금액 입력칸 콤마 서식 적용
 runAllAutoCalc();                // 취득세·중개보수·기본공제·퇴직금 자동계산 일괄 실행(수동수정 필드는 건너뜀)
