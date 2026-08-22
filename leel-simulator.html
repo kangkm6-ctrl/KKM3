@@ -626,13 +626,13 @@
           <label>주택담보대출 금리</label>
           <span class="meta-value"><input type="number" step="0.01" id="loanRateMortgage" value="6.9"><span class="meta-unit">%</span></span>
         </div>
-        <div>
+        <div style="flex:1;">
           <label>적용 금융기관</label>
-          <input type="text" class="manual-field" id="loanBankMortgage" value="" placeholder="예: OO은행" style="width:100px;">
+          <input type="text" class="manual-field" id="loanBankMortgage" value="" placeholder="예: OO은행" style="width:100%; text-align:center;">
         </div>
       </div>
       <div class="rate-source" style="text-align:left; max-width:none; margin-top:14px;">
-        기준: 2026년 7~8월 제1금융권(시중은행) 신규취급 평균 연 6.9%<br>
+        <span id="loanSelectedDesc">아직 선택된 대출 상품이 없습니다. 파일을 불러와 상품을 선택하거나, 금리·금융기관을 직접 입력해주세요.</span><br>
         <a href="https://portal.kfb.or.kr/compare/loan_search.php" target="_blank" rel="noopener">은행연합회에서 최신 대출금리 확인 →</a><br>
         <a href="https://finlife.fss.or.kr/finlife/ldng/houseMrtg/list.do?menuNo=700007" target="_blank" rel="noopener">금융감독원 금융상품한눈에에서 확인 →</a>
       </div>
@@ -1478,6 +1478,8 @@ function applyBestLoanRate(rows, fileName, type, statusEl){
   const findCol = keywords => header.findIndex(h => keywords.some(k=>h.includes(k)));
   const bankCol = findCol(['은행','금융기관','기관명','기관']);
   const productCol = findCol(['상품']);
+  const rateTypeCol = findCol(['금리방식']);
+  const repayTypeCol = findCol(['상환방식']);
   const lowCol = findCol(['최저금리']);
   const highCol = findCol(['최고금리']);
   let plainRateCol = -1;
@@ -1489,7 +1491,7 @@ function applyBestLoanRate(rows, fileName, type, statusEl){
     return;
   }
 
-  const byBank = {}; // 은행별로 평균금리가 가장 낮은 행만 남김(같은 은행의 여러 상품/상환방식 중복 방지)
+  const all = []; // 은행별로 합치지 않고, 상품·금리방식·상환방식별로 각 행을 그대로 유지
   for(let i=headerRowIdx+1;i<rows.length;i++){
     const row = rows[i];
     if(!row || row.length===0) continue;
@@ -1499,18 +1501,20 @@ function applyBestLoanRate(rows, fileName, type, statusEl){
     const plain = readNum(plainRateCol);
 
     let rate;
-    if(low!==null && high!==null) rate = (low+high)/2; // 최저·최고 평균
+    if(low!==null && high!==null) rate = (low+high)/2; // 당월 최저금리·최고금리 평균
     else if(low!==null) rate = low;
     else if(high!==null) rate = high;
     else if(plain!==null) rate = plain;
     else continue;
 
-    const bank = bankCol!==-1 ? String(row[bankCol]||'').trim() : '';
-    const entry = { rate, bank, product: productCol!==-1 ? String(row[productCol]||'').trim() : '' };
-    const key = bank || `__row${i}`;
-    if(!byBank[key] || entry.rate < byBank[key].rate) byBank[key] = entry;
+    all.push({
+      rate,
+      bank: bankCol!==-1 ? String(row[bankCol]||'').trim() : '',
+      product: productCol!==-1 ? String(row[productCol]||'').trim() : '',
+      rateType: rateTypeCol!==-1 ? String(row[rateTypeCol]||'').trim() : '',
+      repayType: repayTypeCol!==-1 ? String(row[repayTypeCol]||'').trim() : ''
+    });
   }
-  const all = Object.values(byBank);
 
   if(!all.length){
     statusEl.textContent = '⚠️ 유효한 금리 숫자를 찾지 못했습니다. 금리 열 값이 숫자(예: 5.8 또는 5.8%)인지 확인해주세요.';
@@ -1534,7 +1538,8 @@ function renderLoanRateDropdown(){
   if(!loanRateOptions.length){ wrap.style.display = 'none'; sel.innerHTML = ''; return; }
   sel.innerHTML = loanRateOptions.map((o,i)=>{
     const label = [o.bank, o.product].filter(Boolean).join(' ') || '(출처 미상)';
-    return `<option value="${i}">${i+1}위 · ${label} · 연 ${o.rate.toFixed(2)}%</option>`;
+    const detail = [o.rateType, o.repayType].filter(Boolean).join('/');
+    return `<option value="${i}">${i+1}위 · ${label}${detail?' ('+detail+')':''} · 연 ${o.rate.toFixed(2)}%</option>`;
   }).join('');
   wrap.style.display = 'block';
   sel.value = String(loanSelectedIndex);
@@ -1557,10 +1562,31 @@ function applyLoanRateOption(index){
 
   renderLoanRateDropdown();
   calcLoanInterest();
+  renderLoanSelectedDesc();
 
   const statusEl = $('loanFileStatusMortgage');
-  statusEl.textContent = `✅ ${opt.bank || '(출처 미상)'} 연 ${opt.rate.toFixed(2)}% 적용됨(최저·최고 평균 기준)`;
+  const detail = [opt.rateType, opt.repayType].filter(Boolean).join('/');
+  statusEl.textContent = `✅ ${opt.bank || '(출처 미상)'}${opt.product ? ' '+opt.product : ''}${detail?' ('+detail+')':''} 연 ${opt.rate.toFixed(2)}% 적용됨(당월 최저·최고 평균 기준)`;
   statusEl.style.color = 'var(--good)';
+}
+
+// 지금 선택(적용)된 대출 상품을 rate-source 자리에 설명해줌
+function renderLoanSelectedDesc(){
+  const el = $('loanSelectedDesc');
+  if(!el) return;
+  const opt = loanRateOptions[loanSelectedIndex];
+  if(opt){
+    const detail = [opt.rateType, opt.repayType].filter(Boolean).join('/');
+    el.textContent = `선택한 상품: ${opt.bank || '(출처 미상)'}${opt.product ? ' '+opt.product : ''}${detail?' ('+detail+')':''} · 연 ${opt.rate.toFixed(2)}%(당월 최저·최고 평균)`;
+    return;
+  }
+  const bank = $('loanBankMortgage') ? $('loanBankMortgage').value.trim() : '';
+  const rate = $('loanRateMortgage') ? $('loanRateMortgage').value : '';
+  if(bank || rate){
+    el.textContent = `현재 적용된 금리: ${bank ? bank+' · ' : ''}연 ${rate}% (직접 입력됨)`;
+  } else {
+    el.textContent = '아직 선택된 대출 상품이 없습니다. 파일을 불러와 상품을 선택하거나, 금리·금융기관을 직접 입력해주세요.';
+  }
 }
 
 // 대출원금×금리로 매월/매년/3년 이자 계산 (이자만, 원금상환 제외)
@@ -1576,6 +1602,7 @@ function calcLoanInterest(){
 
   const bankMortgage = $('loanBankMortgage').value.trim();
   $('loanMortgageTitle').textContent = '주택담보대출 기준' + (bankMortgage ? ` · ${bankMortgage}` : '');
+  renderLoanSelectedDesc();
 }
 
 // "최신값 자동계산" 버튼: 지금까지의 수동고정 기록을 전부 지우고, 4개 자동계산을 전부 강제로 새로 실행.
@@ -2024,6 +2051,11 @@ INPUT_IDS.forEach(id=>{
     }
     if(id==='acqDate' || id==='baseDate'){
       updateHoldingPeriod();    // 준공일 또는 기준일자가 바뀌면 보유·거주기간 재계산
+    }
+    if((id==='loanRateMortgage' || id==='loanBankMortgage') && loanRateOptions[loanSelectedIndex]){
+      loanSelectedIndex = -1; // 직접 수정하면 "선택한 상품" 표시를 해제하고 "직접 입력됨"으로 전환
+      renderLoanRateDropdown();
+      renderLoanSelectedDesc();
     }
     recalc(); saveState();
   });
