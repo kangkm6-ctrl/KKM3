@@ -516,7 +516,7 @@
     </div>
     <button class="reset-btn" id="rateNowBtn" onclick="applyCurrentRate()" style="margin-top:14px;"><span class="btn-icon">⟳</span> 현재금리 입력</button>
 
-    <div class="closing-note" style="margin-top:16px;">예금금리를 정리해둔 <strong>엑셀(.xlsx) 또는 CSV 파일</strong>을 올리면, 기본금리가 가장 높은 은행·상품을 찾아 기준일자·년이자율에 자동으로 적용합니다. (Numbers 파일은 이 앱이 직접 열 수 없으니, Numbers 앱에서 <strong>공유 → 내보내기 → Excel 또는 CSV</strong>로 저장한 뒤 그 파일을 올려주세요. 열 제목에 "은행", "상품", "금리", "날짜"가 포함되어 있으면 자동으로 인식합니다.)</div>
+    <div class="closing-note" style="margin-top:16px;">예금금리를 정리해둔 <strong>엑셀(.xlsx) 또는 CSV 파일</strong>을 올리면, <strong>최고금리</strong>가 가장 높은 은행·상품을 찾아 기준일자·년이자율에 자동으로 적용합니다. (Numbers 파일은 이 앱이 직접 열 수 없으니, Numbers 앱에서 <strong>공유 → 내보내기 → Excel 또는 CSV</strong>로 저장한 뒤 그 파일을 올려주세요. 열 제목에 "은행", "상품", "최고금리"(없으면 "기본금리"나 "금리"), "날짜"가 포함되어 있으면 자동으로 인식합니다.)</div>
     <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:8px;">
       <label class="reset-btn" style="cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
         <span class="btn-icon">📄</span>예금금리 파일 불러오기
@@ -1066,11 +1066,12 @@ function applyBestDepositRate(rows, fileName, statusEl){
   const findCol = keywords => header.findIndex(h => keywords.some(k=>h.includes(k)));
   const bankCol = findCol(['은행','금융기관','기관명','기관']);
   const productCol = findCol(['상품']);
-  const rateCol = findCol(['기본금리','금리','이율']);
+  let rateCol = findCol(['최고금리']);
+  if(rateCol === -1) rateCol = findCol(['기본금리','금리','이율']);
   const dateCol = findCol(['날짜','일자','기준일']);
 
   if(rateCol === -1){
-    statusEl.textContent = `⚠️ "금리" 열을 찾지 못했습니다. 첫 줄(열 제목)에 "금리" 또는 "기본금리"가 포함된 열이 있는지 확인해주세요. (읽은 열 제목: ${header.join(', ')})`;
+    statusEl.textContent = `⚠️ "금리" 열을 찾지 못했습니다. 첫 줄(열 제목)에 "최고금리", "기본금리" 또는 "금리"가 포함된 열이 있는지 확인해주세요. (읽은 열 제목: ${header.join(', ')})`;
     statusEl.style.color = 'var(--warn)';
     return;
   }
