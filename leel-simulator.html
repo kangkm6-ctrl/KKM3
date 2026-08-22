@@ -631,28 +631,6 @@
           <input type="text" class="manual-field" id="loanBankMortgage" value="" placeholder="예: OO은행" style="width:100%; text-align:center;">
         </div>
       </div>
-      <div class="field" style="margin-top:8px;">
-        <label>금리방식</label>
-        <span class="field-value">
-          <select id="loanRateTypeMortgage" class="manual-field" style="width:100%; text-align:center;">
-            <option value="">선택 안 함</option>
-            <option value="고정금리">고정금리</option>
-            <option value="변동금리">변동금리</option>
-            <option value="혼합형">혼합형</option>
-          </select>
-        </span>
-      </div>
-      <div class="field">
-        <label>상환방식</label>
-        <span class="field-value">
-          <select id="loanRepayTypeMortgage" class="manual-field" style="width:100%; text-align:center;">
-            <option value="">선택 안 함</option>
-            <option value="원리금분할상환">원리금분할상환</option>
-            <option value="원금분할상환">원금분할상환</option>
-            <option value="만기일시상환">만기일시상환</option>
-          </select>
-        </span>
-      </div>
       <div class="rate-source" style="text-align:left; max-width:none; margin-top:14px;">
         <span id="loanSelectedDesc">아직 선택된 대출 상품이 없습니다. 파일을 불러와 상품을 선택하거나, 금리·금융기관을 직접 입력해주세요.</span><br>
         <a href="https://portal.kfb.or.kr/compare/loan_search.php" target="_blank" rel="noopener">은행연합회에서 최신 대출금리 확인 →</a><br>
@@ -916,7 +894,7 @@ const INPUT_IDS = ['baseDate','rate','months','acqPrice','salePrice','necExpense
   'acqDate','holdYears','resideYears','basicDeduction','brokerFee','balance','acqTax','regFee','stampTax',
   'hireDate','monthlySalary','companyLoan','deposit','cash','severance','otherSale','jeonseAmt','monthlyDeposit','monthlyRent',
   'hiY1Self','hiY1Spouse','hiY2Self','hiY2Spouse','hiOtherSelf','hiOtherSpouse','hiSpouseProperty','hiSpouseDeposit',
-  'loanPrincipal','loanRateMortgage','loanBankMortgage','loanRateTypeMortgage','loanRepayTypeMortgage'];
+  'loanPrincipal','loanRateMortgage','loanBankMortgage'];
 
 const DEFAULT_BRACKETS = [
   {cap:1400, rate:6, ded:0},
@@ -1529,10 +1507,15 @@ function applyBestLoanRate(rows, fileName, type, statusEl){
     else if(plain!==null) rate = plain;
     else continue;
 
+    const productName = productCol!==-1 ? String(row[productCol]||'').trim() : '';
+    // 상품명에 구입 용도가 아님을 나타내는 표시가 있으면 제외(생활안정자금·일반자금 등은 주택구입에 못 씀)
+    const NON_PURCHASE_KEYWORDS = ['생활', '일반', '대환', '전세반환', '보증금반환', '임차보증금'];
+    if(NON_PURCHASE_KEYWORDS.some(k => productName.includes(k))) continue;
+
     all.push({
       rate,
       bank: bankCol!==-1 ? String(row[bankCol]||'').trim() : '',
-      product: productCol!==-1 ? String(row[productCol]||'').trim() : '',
+      product: productName,
       rateType: rateTypeCol!==-1 ? String(row[rateTypeCol]||'').trim() : '',
       repayType: repayTypeCol!==-1 ? String(row[repayTypeCol]||'').trim() : ''
     });
@@ -1581,8 +1564,6 @@ function applyLoanRateOption(index){
 
   $('loanRateMortgage').value = Math.round(opt.rate*100)/100;
   $('loanBankMortgage').value = opt.bank;
-  $('loanRateTypeMortgage').value = opt.rateType || '';
-  $('loanRepayTypeMortgage').value = opt.repayType || '';
 
   renderLoanRateDropdown();
   calcLoanInterest();
@@ -1606,11 +1587,8 @@ function renderLoanSelectedDesc(){
   }
   const bank = $('loanBankMortgage') ? $('loanBankMortgage').value.trim() : '';
   const rate = $('loanRateMortgage') ? $('loanRateMortgage').value : '';
-  const rateType = $('loanRateTypeMortgage') ? $('loanRateTypeMortgage').value : '';
-  const repayType = $('loanRepayTypeMortgage') ? $('loanRepayTypeMortgage').value : '';
-  const manualDetail = [rateType, repayType].filter(Boolean).join('/');
   if(bank || rate){
-    el.textContent = `현재 적용된 금리: ${bank ? bank+' · ' : ''}${manualDetail?'('+manualDetail+') ':''}연 ${rate}% (직접 입력됨)`;
+    el.textContent = `현재 적용된 금리: ${bank ? bank+' · ' : ''}연 ${rate}% (직접 입력됨)`;
   } else {
     el.textContent = '아직 선택된 대출 상품이 없습니다. 파일을 불러와 상품을 선택하거나, 금리·금융기관을 직접 입력해주세요.';
   }
@@ -2079,7 +2057,7 @@ INPUT_IDS.forEach(id=>{
     if(id==='acqDate' || id==='baseDate'){
       updateHoldingPeriod();    // 준공일 또는 기준일자가 바뀌면 보유·거주기간 재계산
     }
-    if((id==='loanRateMortgage' || id==='loanBankMortgage' || id==='loanRateTypeMortgage' || id==='loanRepayTypeMortgage') && loanRateOptions[loanSelectedIndex]){
+    if((id==='loanRateMortgage' || id==='loanBankMortgage') && loanRateOptions[loanSelectedIndex]){
       loanSelectedIndex = -1; // 직접 수정하면 "선택한 상품" 표시를 해제하고 "직접 입력됨"으로 전환
       renderLoanRateDropdown();
       renderLoanSelectedDesc();
