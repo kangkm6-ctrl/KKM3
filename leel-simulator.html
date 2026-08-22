@@ -1108,6 +1108,18 @@ function handleDepositFile(event){
   else { reader.readAsArrayBuffer(file); }
 }
 
+// 여러 줄 중에서 실제 "열 제목" 줄을 찾아줌(검색조건 요약 등 앞머리 잡다한 줄을 건너뜀).
+// keywordSets의 각 그룹에서 최소 하나씩은 매칭되는 첫 줄을 헤더로 인정, 못 찾으면 0번째 줄로 대체.
+function findHeaderRowIndex(rows, keywordSets){
+  const maxScan = Math.min(rows.length, 10);
+  for(let r=0; r<maxScan; r++){
+    const cells = (rows[r]||[]).map(h=>String(h==null?'':h).trim());
+    const ok = keywordSets.every(set => cells.some(cell => set.some(k=>cell.includes(k))));
+    if(ok) return r;
+  }
+  return 0;
+}
+
 function parseCSVText(text){
   return text.split(/\r?\n/).filter(l=>l.trim()!=='').map(line=>
     line.split(',').map(cell=>cell.trim().replace(/^"|"$/g,''))
@@ -1136,7 +1148,8 @@ function applyBestDepositRate(rows, fileName, statusEl){
     statusEl.style.color = 'var(--warn)';
     return;
   }
-  const header = rows[0].map(h=>String(h||'').trim());
+  const headerRowIdx = findHeaderRowIndex(rows, [['은행','금융기관','기관'],['금리']]);
+  const header = rows[headerRowIdx].map(h=>String(h||'').trim());
   const findCol = keywords => header.findIndex(h => keywords.some(k=>h.includes(k)));
   const bankCol = findCol(['은행','금융기관','기관명','기관']);
   const productCol = findCol(['상품']);
@@ -1150,20 +1163,24 @@ function applyBestDepositRate(rows, fileName, statusEl){
     return;
   }
 
-  const all = [];
-  for(let i=1;i<rows.length;i++){
+  const byBank = {}; // 은행별 최고금리 행만 남김(같은 은행 여러 상품/조건 중복 방지)
+  for(let i=headerRowIdx+1;i<rows.length;i++){
     const row = rows[i];
     if(!row || row.length===0) continue;
     const rawRate = String(row[rateCol]==null?'':row[rateCol]).replace('%','').trim();
     const rateVal = parseFloat(rawRate);
     if(isNaN(rateVal)) continue;
-    all.push({
+    const bank = bankCol!==-1 ? String(row[bankCol]||'').trim() : '';
+    const entry = {
       rate: rateVal,
-      bank: bankCol!==-1 ? String(row[bankCol]||'').trim() : '',
+      bank,
       product: productCol!==-1 ? String(row[productCol]||'').trim() : '',
       dateRaw: dateCol!==-1 ? row[dateCol] : null
-    });
+    };
+    const key = bank || `__row${i}`;
+    if(!byBank[key] || entry.rate > byBank[key].rate) byBank[key] = entry;
   }
+  const all = Object.values(byBank);
 
   if(!all.length){
     statusEl.textContent = '⚠️ 유효한 금리 숫자를 찾지 못했습니다. 금리 열 값이 숫자(예: 3.2 또는 3.2%)인지 확인해주세요.';
@@ -1456,9 +1473,11 @@ function applyBestLoanRate(rows, fileName, type, statusEl){
     statusEl.style.color = 'var(--warn)';
     return;
   }
-  const header = rows[0].map(h=>String(h||'').trim());
+  const headerRowIdx = findHeaderRowIndex(rows, [['은행','금융기관','기관'],['금리']]);
+  const header = rows[headerRowIdx].map(h=>String(h||'').trim());
   const findCol = keywords => header.findIndex(h => keywords.some(k=>h.includes(k)));
   const bankCol = findCol(['은행','금융기관','기관명','기관']);
+  const productCol = findCol(['상품']);
   const lowCol = findCol(['최저금리']);
   const highCol = findCol(['최고금리']);
   let plainRateCol = -1;
@@ -1470,8 +1489,8 @@ function applyBestLoanRate(rows, fileName, type, statusEl){
     return;
   }
 
-  const all = [];
-  for(let i=1;i<rows.length;i++){
+  const byBank = {}; // 은행별로 평균금리가 가장 낮은 행만 남김(같은 은행의 여러 상품/상환방식 중복 방지)
+  for(let i=headerRowIdx+1;i<rows.length;i++){
     const row = rows[i];
     if(!row || row.length===0) continue;
     const readNum = c => { if(c===-1) return null; const v = parseFloat(String(row[c]==null?'':row[c]).replace('%','').trim()); return isNaN(v) ? null : v; };
@@ -1486,8 +1505,12 @@ function applyBestLoanRate(rows, fileName, type, statusEl){
     else if(plain!==null) rate = plain;
     else continue;
 
-    all.push({ rate, bank: bankCol!==-1 ? String(row[bankCol]||'').trim() : '' });
+    const bank = bankCol!==-1 ? String(row[bankCol]||'').trim() : '';
+    const entry = { rate, bank, product: productCol!==-1 ? String(row[productCol]||'').trim() : '' };
+    const key = bank || `__row${i}`;
+    if(!byBank[key] || entry.rate < byBank[key].rate) byBank[key] = entry;
   }
+  const all = Object.values(byBank);
 
   if(!all.length){
     statusEl.textContent = '⚠️ 유효한 금리 숫자를 찾지 못했습니다. 금리 열 값이 숫자(예: 5.8 또는 5.8%)인지 확인해주세요.';
@@ -1510,7 +1533,7 @@ function renderLoanRateDropdown(){
   if(!wrap || !sel) return;
   if(!loanRateOptions.length){ wrap.style.display = 'none'; sel.innerHTML = ''; return; }
   sel.innerHTML = loanRateOptions.map((o,i)=>{
-    const label = o.bank || '(출처 미상)';
+    const label = [o.bank, o.product].filter(Boolean).join(' ') || '(출처 미상)';
     return `<option value="${i}">${i+1}위 · ${label} · 연 ${o.rate.toFixed(2)}%</option>`;
   }).join('');
   wrap.style.display = 'block';
