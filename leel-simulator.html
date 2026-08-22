@@ -753,7 +753,8 @@
 
   <footer>
     개인 재무 시뮬레이션용 도구이며, 실제 세액·법령 기준(비과세한도, 세율 구간 등)은 변경될 수 있으니 최종 신고 전 세무사 확인을 권장합니다.<br>
-    금액 단위: 만원(萬원)
+    금액 단위: 만원(萬원)<br>
+    <span style="font-family:'IBM Plex Mono',monospace; opacity:.6;">build 2026-08-22-01 · 예금금리 파일 상태줄 지속표시 반영</span>
   </footer>
 </div>
 
@@ -966,6 +967,8 @@ const CURRENT_RATE_HIGH = 2.95; // 5대 시중은행 12개월 정기예금 평�
 let rateAppliedInfo = null; // {value, date} — "현재금리 입력" 버튼을 누른 시점 기록
 let depositApplyInfo = null; // {bank, product, rate} — 예금금리 파일에서 마지막으로 적용한 내용(새로 적용되기 전까지 계속 표시)
 
+const DEPOSIT_INFO_KEY = 'reol-fund-sim-deposit-v1'; // 별도 백업 저장(메인 저장과 별개로 이중 보관)
+
 function renderDepositStatus(){
   const el = $('depositFileStatus');
   if(!el) return;
@@ -973,6 +976,21 @@ function renderDepositStatus(){
   const label = [depositApplyInfo.bank, depositApplyInfo.product].filter(Boolean).join(' ');
   el.textContent = `✅ ${label || '(출처 미상)'} 연 ${depositApplyInfo.rate}% 적용됨`;
   el.style.color = 'var(--good)';
+}
+
+function saveDepositInfoBackup(){
+  try{ localStorage.setItem(DEPOSIT_INFO_KEY, JSON.stringify(depositApplyInfo)); }catch(e){}
+}
+
+function loadDepositInfoBackup(){
+  if(depositApplyInfo) return; // 메인 저장에서 이미 복원됐으면 백업은 건드리지 않음
+  try{
+    const raw = localStorage.getItem(DEPOSIT_INFO_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(parsed) depositApplyInfo = parsed;
+    }
+  }catch(e){}
 }
 
 function formatToday(){
@@ -1119,6 +1137,7 @@ function applyBestDepositRate(rows, fileName, statusEl){
     date: normalizedDate || $('baseDate').value
   };
   depositApplyInfo = { bank: best.bank, product: best.product, rate: best.rate };
+  saveDepositInfoBackup();
   renderRateNote();
   renderDepositStatus();
   updateHoldingPeriod();
@@ -1757,6 +1776,7 @@ function calcRegionalPremium(y1Spouse, y2Spouse, selfTotal){
 
 DEFAULTS = collectDefaults();   // capture the example values baked into the HTML
 loadState();                     // then overwrite with anything saved from before (오프라인 캐시)
+loadDepositInfoBackup();         // 별도 백업에서도 복원 시도(메인 저장이 비어있을 때 대비)
 renderRateNote();                // reflect restored "현재금리 입력" state, if any
 renderDepositStatus();           // 복원된 예금금리 파일 적용 상태 표시
 updateHoldingPeriod();           // 준공일/기준일자 기준 보유·거주기간 초기 계산
@@ -1774,6 +1794,7 @@ INPUT_IDS.forEach(id=>{
     }
     if(id==='rate' && depositApplyInfo){
       depositApplyInfo = null; // 적용이율이 바뀌었으니 예금파일 적용 표시도 해제
+      saveDepositInfoBackup();
       renderDepositStatus();
     }
     if(id==='acqDate' || id==='baseDate'){
