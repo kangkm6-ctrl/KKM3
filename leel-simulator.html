@@ -365,6 +365,13 @@
     </div>
     <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
       <button class="reset-btn" type="button" onclick="refreshAllAutoCalc()"><span class="btn-icon">🔄</span> 최신값 자동계산</button>
+      <div style="display:flex; gap:8px;">
+        <button class="reset-btn" type="button" onclick="exportBackup()"><span class="btn-icon">💾</span> 백업 저장</button>
+        <label class="reset-btn" style="cursor:pointer; margin:0;">
+          <span class="btn-icon">📂</span> 백업 불러오기
+          <input type="file" id="backupFileInput" accept=".json" style="display:none;" onchange="importBackup(event)">
+        </label>
+      </div>
       <div class="save-indicator" id="saveIndicator">자동 저장됨</div>
     </div>
   </header>
@@ -1625,6 +1632,54 @@ function refreshAllAutoCalc(){
   recalc();
   saveState(); // 잠금 없는 상태로 저장 → 다음 시작부터는 자동으로 계속 적용됨
   setSyncIndicator('✅ 전체 자동계산 완료 · 다음부터 자동 적용됨', true);
+}
+
+// ---------- 폰을 옮길 때를 대비한 백업 저장/불러오기 ----------
+// 이 앱은 폰(브라우저)의 localStorage에만 저장되므로, 새 폰으로 옮기거나 브라우저 데이터가
+// 지워지면 값이 전부 사라집니다. 아래 두 함수로 전체 상태를 파일 하나로 내보내고 다시 불러올 수 있습니다.
+function exportBackup(){
+  const backup = {
+    __app: 'leel-simulator',
+    __exportedAt: new Date().toISOString(),
+    main: localStorage.getItem(STORAGE_KEY) ? JSON.parse(localStorage.getItem(STORAGE_KEY)) : null,
+    depositInfo: localStorage.getItem(DEPOSIT_INFO_KEY) ? JSON.parse(localStorage.getItem(DEPOSIT_INFO_KEY)) : null
+  };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const today = formatToday();
+  a.href = url;
+  a.download = `leel-simulator-백업-${today}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+}
+
+function importBackup(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onerror = () => alert('⚠️ 백업 파일을 읽지 못했습니다.');
+  reader.onload = (e) => {
+    try{
+      const backup = JSON.parse(e.target.result);
+      if(!backup || backup.__app !== 'leel-simulator' || !backup.main){
+        alert('⚠️ 이 파일은 leel-simulator 백업 파일이 아닌 것 같습니다.');
+        return;
+      }
+      if(!confirm(`이 폰에 저장된 지금 값을 전부 지우고,\n${backup.__exportedAt ? backup.__exportedAt.slice(0,10)+' 저장된 ' : ''}백업 내용으로 덮어씁니다. 계속할까요?`)) return;
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(backup.main));
+      if(backup.depositInfo) localStorage.setItem(DEPOSIT_INFO_KEY, JSON.stringify(backup.depositInfo));
+
+      alert('✅ 백업을 불러왔습니다. 화면을 새로고침합니다.');
+      location.reload();
+    }catch(err){
+      alert('⚠️ 백업 파일 형식이 올바르지 않습니다: ' + err.message);
+    }
+  };
+  reader.readAsText(file, 'utf-8');
 }
 
 function renderBracketTable(activeIdx){
