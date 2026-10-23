@@ -290,6 +290,8 @@
   }
   .reset-btn:hover{border-color:var(--accent); background:var(--accent-soft);}
   .btn-icon{display:inline-block; margin-right:2px;}
+  .bk-row .reset-btn{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0; line-height:1.15; padding:6px 12px; white-space:nowrap; word-break:keep-all; border-radius:16px; flex:1 1 0; text-align:center;}
+  .bk-row .btn-icon{font-size:1.5em; margin:0 0 5px; line-height:1.2;}
   .save-indicator{
     font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--good);
     opacity:0; transition:opacity .4s ease; letter-spacing:.05em;
@@ -336,6 +338,42 @@
     60%{transform:translateX(-6px);}
     80%{transform:translateX(6px);}
   }
+
+  /* ===== 컴팩트 + 설명 접기 ===== */
+  body{padding:12px 10px 40px !important;}
+  header, .header{padding:12px 14px !important; margin-bottom:12px !important;}
+  .eyebrow{margin-bottom:4px !important;}
+  .hero{gap:10px !important; margin-bottom:14px !important;}
+  .hero > *{padding:14px 16px 12px !important;}
+  .opt-title{margin-bottom:8px !important;}
+  .opt-sum{margin-top:6px !important; line-height:1.6 !important;}
+  .opt-sum div{margin-bottom:0 !important;}
+  .section{padding:12px 14px 12px !important; margin-bottom:10px !important;}
+  .section-head{margin-bottom:8px !important; padding-bottom:8px !important;}
+  .field{padding:5px 0 !important;}
+  .out{padding:5px 0 !important;}
+  .out.total{margin-top:3px !important; padding-top:8px !important;}
+  .field-group{margin-bottom:2px !important;}
+  .field-group h3{margin:0 0 6px !important;}
+  .mini-card{padding:9px 12px !important; margin-bottom:8px !important;}
+  .mini-card h4{margin:0 0 6px !important;}
+  .meta-box{padding:7px 12px !important;}
+  .compare-card{margin-top:14px !important;}
+  .basis-toggle{margin:2px 0 !important;}
+  .closing-note{margin:4px 0 2px !important; line-height:1.5 !important;}
+  .section-collapse summary.section-summary{padding-bottom:8px !important;}
+  footer{margin-top:14px !important;}
+  details.info-toggle{margin:2px 0;}
+  details.info-toggle > summary{
+    list-style:none; cursor:pointer; user-select:none; display:inline-block;
+    font-size:11px; color:var(--accent); padding:1px 0;
+  }
+  details.info-toggle > summary::-webkit-details-marker{display:none;}
+  details.info-toggle[open] > summary{margin-bottom:3px;}
+  details.info-toggle > .section-note, details.info-toggle > .closing-note, details.info-toggle > .rate-source, details.info-toggle > .sub{margin-top:2px !important;}
+  .has-hint small{display:none !important;}
+  .has-hint.hint-open small{display:block !important;}
+  .hint-i{display:inline-block; margin-left:5px; font-size:11px; color:var(--accent); cursor:pointer; font-style:normal;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
@@ -360,17 +398,17 @@
       <div class="sub">보유 주택을 매도해 양도소득세를 낸 뒤, 새 아파트(르엘) 입주에 필요한 자금을 전세와 월세 브릿지 방식으로 조달할 때 어느 쪽이 유리한지 계산합니다. 모든 값은 직접 수정할 수 있습니다.</div>
       <div class="sub" style="margin-top:8px; display:flex; align-items:center; gap:6px;">
         <span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#EAF1F7; border:1px solid #B9CEDD;"></span>
-        파란빛 배경 = 직접 입력하는(또는 수동으로 고정한) 값 · 나머지는 자동계산됨
+        <span>파란빛 배경 = 직접 입력하는(또는 수동으로 고정한) 값<br>나머지는 자동계산됨</span>
       </div>
     </div>
     <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
-      <button class="reset-btn" type="button" onclick="refreshAllAutoCalc()"><span class="btn-icon">🔄</span> 최신값 자동계산</button>
-      <div style="display:flex; gap:8px;">
-        <button class="reset-btn" type="button" onclick="exportBackup()"><span class="btn-icon">💾</span> 백업 저장</button>
+      <div class="bk-row" style="display:flex; gap:8px;">
+        <button class="reset-btn" type="button" onclick="exportBackup()"><span class="btn-icon">💾</span>백업저장</button>
         <label class="reset-btn" style="cursor:pointer; margin:0;">
-          <span class="btn-icon">📂</span> 백업 불러오기
+          <span class="btn-icon">📂</span>백업불러오기
           <input type="file" id="backupFileInput" accept=".json" style="display:none;" onchange="importBackup(event)">
         </label>
+        <button class="reset-btn" type="button" onclick="refreshAllAutoCalc()"><span class="btn-icon">🔄</span>최신값자동계산</button>
       </div>
       <div class="save-indicator" id="saveIndicator">자동 저장됨</div>
     </div>
@@ -2134,6 +2172,33 @@ MONEY_IDS.forEach(id=>{
 
 renderBracketTable(0);
 recalc();
+</script>
+
+<script>
+(function(){
+  try{
+    var keep={hiJeonsePreview:1,hiWolsePreview:1};
+    function wrap(el,label){
+      var d=document.createElement('details'); d.className='info-toggle';
+      var sm=document.createElement('summary'); sm.textContent=label;
+      el.parentNode.insertBefore(d,el); d.appendChild(sm); d.appendChild(el);
+    }
+    document.querySelectorAll('.section-note,.closing-note,.rate-source').forEach(function(el){
+      if(keep[el.id]) return;
+      if(el.closest('details')) return;
+      wrap(el,'ⓘ 설명');
+    });
+    var hs=document.querySelector('header .sub, .header .sub');
+    if(hs && !hs.closest('details') && hs.textContent.trim().length>30 && !hs.querySelector('input,button')) wrap(hs,'ⓘ 설명');
+    document.querySelectorAll('.field label small, .out label small').forEach(function(sm){
+      var row=sm.closest('.field,.out'); if(!row||row.classList.contains('has-hint')) return;
+      row.classList.add('has-hint');
+      var lab=sm.closest('label'); var i=document.createElement('i'); i.className='hint-i'; i.textContent='ⓘ';
+      lab.appendChild(i);
+      i.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();row.classList.toggle('hint-open');});
+    });
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
