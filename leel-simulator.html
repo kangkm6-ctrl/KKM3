@@ -374,6 +374,50 @@
   .has-hint small{display:none !important;}
   .has-hint.hint-open small{display:block !important;}
   .hint-i{display:inline-block; margin-left:5px; font-size:11px; color:var(--accent); cursor:pointer; font-style:normal;}
+
+  .sec-bridge .section-head{margin-bottom:4px !important; padding-bottom:5px !important;}
+  .sec-bridge .cols{gap:0 12px !important;}
+  .sec-bridge .mini-card{padding:4px 10px !important; margin-bottom:4px !important; border-radius:8px !important;}
+  .sec-bridge .mini-card h4{margin:0 0 1px !important; font-size:11px !important; line-height:1.3 !important;}
+  .sec-bridge .field, .sec-bridge .out{padding:2px 0 !important;}
+  .sec-bridge .field input{padding:3px 7px !important;}
+  .sec-bridge .out .val{line-height:1.3 !important; font-size:13.5px !important;}
+  .sec-bridge .out label, .sec-bridge .field label{font-size:12.5px !important;}
+  .sec-bridge .out.total{margin-top:1px !important; padding-top:3px !important;}
+  .sec-bridge .compare-card{margin-top:4px !important;}
+
+  .section{padding:8px 12px 8px !important; margin-bottom:6px !important;}
+  .section-head{margin-bottom:4px !important; padding-bottom:5px !important;}
+  .section-title{font-size:17px !important;}
+  .cols, .cols3{gap:0 12px !important;}
+  .mini-card{padding:4px 10px !important; margin-bottom:4px !important; border-radius:8px !important;}
+  .mini-card h4{margin:0 0 1px !important; font-size:11px !important; line-height:1.3 !important;}
+  .field, .out{padding:2px 0 !important;}
+  .field input, .field select{padding:3px 7px !important;}
+  .out .val{line-height:1.3 !important; font-size:13.5px !important;}
+  .out label, .field label{font-size:12.5px !important;}
+  .out.total{margin-top:1px !important; padding-top:3px !important;}
+  .field-group{margin-bottom:0 !important;}
+  .field-group h3{margin:0 0 3px !important;}
+  .meta-box{padding:5px 10px !important; margin:6px 0 !important;}
+  .basis-toggle{margin:0 !important;}
+  .basis-toggle summary{padding:1px 0 !important;}
+  .closing-note{margin:2px 0 !important;}
+  table.bracket td{padding:4px 6px !important;}
+  table.bracket th{padding:5px 6px !important;}
+  .bracket-toggle{margin-top:6px !important;}
+  .hero > *{padding:10px 14px 8px !important;}
+  .opt-title{font-size:17px !important; margin-bottom:4px !important;}
+  .opt-sum{margin-top:3px !important; line-height:1.5 !important;}
+
+  header{gap:4px 12px !important; padding:8px 12px !important; margin-bottom:6px !important; align-items:center !important;}
+  .eyebrow{font-family:'Noto Serif KR',serif !important; font-size:28.5px !important; letter-spacing:0 !important; text-transform:none !important; white-space:nowrap; margin-bottom:2px !important; line-height:1.25;}
+  header .sub{margin-top:2px !important; line-height:1.4 !important; font-size:12px !important;}
+  header .info-toggle{margin:0 !important;}
+  .bk-row .reset-btn{padding:3px 8px !important; font-size:11px !important;}
+  .bk-row .btn-icon{margin-bottom:2px !important;}
+  header > div:last-child{gap:2px !important;}
+  .save-indicator{line-height:1 !important; min-height:0 !important; font-size:10px !important;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
@@ -394,7 +438,7 @@
 
   <header>
     <div>
-      <div class="eyebrow">Capital Gains &amp; Relocation Fund Simulator</div>
+      <div class="eyebrow">르엘입주 시뮬레이터</div>
       <div class="sub">보유 주택을 매도해 양도소득세를 낸 뒤, 새 아파트(르엘) 입주에 필요한 자금을 전세와 월세 브릿지 방식으로 조달할 때 어느 쪽이 유리한지 계산합니다. 모든 값은 직접 수정할 수 있습니다.</div>
       <div class="sub" style="margin-top:8px; display:flex; align-items:center; gap:6px;">
         <span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#EAF1F7; border:1px solid #B9CEDD;"></span>
@@ -427,7 +471,7 @@
       <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
         <button class="mini-btn" onclick="autoCalcClosingCosts()" type="button"><span class="btn-icon">⟳</span>취득세·등기비·인지세 자동계산</button>
       </div>
-      <div class="field"><label>잔금</label><span class="field-value"><input type="text" inputmode="numeric" class="manual-field" id="balance" value="215700"><span class="unit">만원</span></span></div>
+      <div class="field"><label>분양가</label><span class="field-value"><input type="text" inputmode="numeric" class="manual-field" id="balance" value="215700"><span class="unit">만원</span></span></div>
       <div class="field"><label>취득세</label><span class="field-value"><input type="text" inputmode="numeric" id="acqTax" value="7866"><span class="unit">만원</span></span></div>
       <div class="field"><label>등기비</label><span class="field-value"><input type="text" inputmode="numeric" id="regFee" value="2800"><span class="unit">만원</span></span></div>
       <div class="field"><label>인지세</label><span class="field-value"><input type="text" inputmode="numeric" id="stampTax" value="800"><span class="unit">만원</span></span></div>
@@ -462,6 +506,7 @@
           <div class="field"><label>중개보수<button class="mini-btn" style="margin-left:6px;" onclick="autoCalcBrokerFee()" type="button"><span class="btn-icon">⟳</span>자동계산</button></label><span class="field-value"><input type="text" inputmode="numeric" id="brokerFee" value="1530"><span class="unit">만원</span></span></div>
           <details class="basis-toggle"><summary>근거</summary><div class="closing-note" id="brokerFeeNote">양도가액 기준 매매 중개보수 상한요율 추정치입니다. 실제 협의 요율로 직접 수정하세요.</div></details>
         </div>
+        <details class="basis-toggle"><summary>근거</summary>
         <div class="formula">
           양도차익=양도가액−취득가액<br>
           과세대상양도차익=양도차익×(양도가액−비과세한도)÷양도가액<br>
@@ -473,6 +518,7 @@
             </div>
           </details>
         </div>
+        </details>
       </div>
       <div>
         <div class="field-group">
@@ -519,19 +565,19 @@
     </div>
   </div>
 
-  <!-- SECTION 4: 동원현금 -->
+  <!-- SECTION 4: 동원가능한 자금 -->
   <div class="section">
     <div class="section-head">
       <div class="section-head-top">
         <div class="section-num">04</div>
-        <div class="section-title">주택 매도 후 동원 가능한 현금</div>
+        <div class="section-title">동원가능한 자금</div>
       </div>
-      <div class="section-note">보유주택 매도 후 현금확보 예상액(세후수익)+현금</div>
+      <div class="section-note">보유주택 매도 후 현금확보 예상액(세후수익)+조달자금 합계</div>
     </div>
     <div class="field-group">
       <div class="out"><label>보유주택 매도 후 현금확보 예상액</label><span class="val" id="oMobilizedFromSale">-</span></div>
-      <div class="out"><label>현금</label><span class="val" id="oMobilizedFromCash">-</span></div>
-      <div class="out total"><label>동원현금 합계</label><span class="val" id="oMobilizedCash">-</span></div>
+      <div class="out"><label>조달자금 합계</label><span class="val" id="oMobilizedFromCash">-</span></div>
+      <div class="out total"><label>동원가능한 자금 합계</label><span class="val" id="oMobilizedCash">-</span></div>
     </div>
   </div>
 
@@ -579,13 +625,13 @@
   </div>
 
   <!-- SECTION 6: 브릿지 -->
-  <div class="section">
+  <div class="section sec-bridge">
     <div class="section-head">
       <div class="section-head-top">
         <div class="section-num">06</div>
         <div class="section-title">전세 vs 월세, 비용 및 이자수익</div>
       </div>
-      <div class="section-note">매도가 마무리될 때까지의 임시 거주 방식별 기회비용과, 남는 동원현금의 운용수익을 비교합니다.</div>
+      <div class="section-note">매도가 마무리될 때까지의 임시 거주 방식별 기회비용과, 남는 동원가능한 자금의 운용수익을 비교합니다.</div>
     </div>
     <div class="cols">
       <div>
@@ -595,8 +641,8 @@
           <div class="out"><label>전세경비<small class="block-note" style="color:var(--soft-text)">(전세가 × 이자율 × 기간(기회비용))</small></label><span class="val accent" id="oJeonseCost">-</span></div>
         </div>
         <div class="mini-card">
-          <h4>전세일 때 동원현금 이자수익</h4>
-          <div class="out"><label>여유자금<small class="block-note" style="color:var(--soft-text)">(동원현금 − 전세가)</small></label><span class="val" id="oFreeJeonse">-</span></div>
+          <h4>전세일 때 동원가능한 자금 이자수익</h4>
+          <div class="out"><label>여유자금<small class="block-note" style="color:var(--soft-text)">(동원가능한 자금 − 전세가)</small></label><span class="val" id="oFreeJeonse">-</span></div>
           <div class="out"><label>이자수익</label><span class="val" id="oInterestJeonse">-</span></div>
         </div>
       </div>
@@ -608,8 +654,8 @@
           <div class="out"><label>월세경비<small class="block-note" style="color:var(--soft-text)">(월세×기간 − 보증금기회비용)</small></label><span class="val accent" id="oMonthlyCost">-</span></div>
         </div>
         <div class="mini-card">
-          <h4>월세일 때 동원현금 이자수익</h4>
-          <div class="out"><label>여유자금<small class="block-note" style="color:var(--soft-text)">(동원현금 − 월세보증금)</small></label><span class="val" id="oFreeMonthly">-</span></div>
+          <h4>월세일 때 동원가능한 자금 이자수익</h4>
+          <div class="out"><label>여유자금<small class="block-note" style="color:var(--soft-text)">(동원가능한 자금 − 월세보증금)</small></label><span class="val" id="oFreeMonthly">-</span></div>
           <div class="out"><label>이자수익</label><span class="val" id="oInterestMonthlyRaw">-</span></div>
         </div>
       </div>
@@ -1829,11 +1875,11 @@ function recalc(){
   // ---- Section 2: 자금 ----
   const sum1 = num('balance')+num('acqTax')+num('regFee')+num('stampTax');
   const sum2 = num('deposit')+num('cash')+num('severance')+num('otherSale');
-  const mobilizedCash = afterTaxProfit + num('cash');
+  const mobilizedCash = afterTaxProfit + sum2;
   $('oSum1').textContent = fmtEok(sum1);
   $('oSum2').textContent = fmtEok(sum2);
   $('oMobilizedFromSale').textContent = fmtEok(afterTaxProfit);
-  $('oMobilizedFromCash').textContent = fmtEok(num('cash'));
+  $('oMobilizedFromCash').textContent = fmtEok(sum2);
   $('oMobilizedCash').textContent = fmtEok(mobilizedCash);
 
   // ---- Section 3: 브릿지 ----
