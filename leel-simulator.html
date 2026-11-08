@@ -418,6 +418,76 @@
   .bk-row .btn-icon{margin-bottom:2px !important;}
   header > div:last-child{gap:2px !important;}
   .save-indicator{line-height:1 !important; min-height:0 !important; font-size:10px !important;}
+
+  .rt-grid{display:grid; grid-template-columns:1.25fr 1fr 1fr 1fr; gap:0 6px; align-items:center; font-size:12.5px;}
+  .rt-labels, .rt-col{display:flex; flex-direction:column; gap:2px;}
+  .rt-labels > div, .rt-col > *{padding:0 2px; height:28px; display:flex; align-items:center;}
+  .rt-labels > div{font-size:11.5px; line-height:1.2;}
+  .rt-head{font-weight:700; color:var(--accent); justify-content:center; font-size:12px;}
+  .rt-in{gap:2px; justify-content:flex-end;}
+  .rt-in input{width:100%; min-width:0; text-align:right; padding:3px 4px; border:1px solid var(--line); border-radius:6px; background:var(--card-alt); font-family:'IBM Plex Mono',monospace; font-size:12.5px;}
+  .rt-in span{font-size:11px; color:var(--text-soft);}
+  .rt-out{justify-content:flex-end; font-family:'IBM Plex Mono',monospace; font-size:11px; text-align:right; white-space:nowrap; letter-spacing:-.04em;}
+  .rt-sel{background:var(--accent-soft); border-radius:6px;}
+  .sec-rent select{padding:3px 7px; border:1px solid var(--line); border-radius:7px; background:var(--card-alt); font-size:13px;}
+
+  .mode-tabs{display:flex; gap:0; margin:0 0 4px; border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--card);}
+  .mode-tabs button{flex:1; padding:9px 4px; border:0; background:transparent; font-family:'Noto Sans KR',sans-serif; font-size:14px; font-weight:700; color:var(--text-soft); cursor:pointer;}
+  .mode-tabs button + button{border-left:1px solid var(--line);}
+  .mode-tabs button.active{background:var(--accent); color:#fff;}
+  .mode-desc{font-size:11.5px; color:var(--text-soft); margin:0 2px 6px; line-height:1.4;}
+  .lease-row{display:none;}
+
+  /* ===== 일반 프로그램 스타일(중립 색상, 시스템 글꼴, 평평한 패널) ===== */
+  :root{
+    --bg:#EEF0F3; --bg-alt:#E3E6EA; --card:#FFFFFF; --card-alt:#F6F7F9;
+    --line:#D5D9DF; --line-soft:#E8EBEF; --text:#1F2937; --text-soft:#6B7280;
+    --accent:#2F5FA7; --accent-deep:#244B85; --accent-soft:#DCE7F5;
+    --good:#2E7D5B; --good-deep:#256B4D; --warn:#C0392B; --warn-soft:#D9776B;
+    --shadow:none;
+  }
+  body{font-family:-apple-system,'Apple SD Gothic Neo','Noto Sans KR','Segoe UI',sans-serif !important; font-size:14px;}
+  .section-title, .opt-title, .eyebrow, .lock-title{font-family:inherit !important;}
+  header{border-radius:0 !important; background:#2B3340 !important; border:0 !important; margin:-12px -10px 8px !important; padding:10px 14px !important;}
+  header .eyebrow{color:#fff !important; font-size:20px !important; font-weight:700 !important;}
+  header .sub, header .info-toggle summary{color:#C9D1DC !important;}
+  header .reset-btn{background:#3A4454 !important; color:#E5E9F0 !important; border-color:#4A5568 !important; border-radius:6px !important;}
+  header .reset-btn:hover{background:#465165 !important;}
+  header .save-indicator{color:#9FD8B8 !important;}
+  .section, .mini-card, .opt, .hero > *, .meta-box{border-radius:6px !important; box-shadow:none !important; border:1px solid var(--line) !important;}
+  .section-head{border-bottom:1px solid var(--line) !important;}
+  .section-num{border-radius:4px !important; background:var(--accent-soft); border:0 !important; color:var(--accent-deep) !important; font-family:inherit !important;}
+  .mini-card{background:var(--card-alt) !important;}
+  .reset-btn, .mini-btn{border-radius:6px !important;}
+  .field input, .field select, .meta-box input, .rt-in input{border-radius:4px !important;}
+  .field input.manual-field, .meta-box input.manual-field{background:#E6EEFA !important; border-color:#A9C1E6 !important;}
+  .mode-tabs{position:sticky; top:0; z-index:20; border-radius:6px !important; box-shadow:0 1px 3px rgba(0,0,0,.12);}
+  .mode-tabs button{font-family:inherit !important;}
+  .stamp{border-radius:50% !important;}
+  .opt.jeonse{border-left:4px solid #2E7D5B !important;}
+  .opt.wolse{border-left:4px solid #C98A2B !important;}
+  .out .val, .rt-in input, .rt-out, .opt-figure, .opt-sum b{font-family:'SF Mono',ui-monospace,Menlo,Consolas,monospace !important;}
+  footer{color:var(--text-soft);}
+
+  #rentPanel.mode-j .rw-w{display:none !important;}
+  #rentPanel.mode-w .rw-j{display:none !important;}
+  .rt-col .rt-head{cursor:default; color:var(--text-soft); font-weight:600;}
+  .rt-col .rt-head.rt-sel{color:var(--accent) !important; font-weight:800; background:transparent !important; border:0 !important;}
+  .rt-col .rt-out.rt-sel{background:var(--accent-soft) !important;}
+
+  .tier-row{display:flex; align-items:center; gap:6px; margin:4px 0 6px; font-size:12.5px; color:var(--text-soft);}
+  .tier-chip{flex:1; padding:6px 0; border:1px solid var(--line); border-radius:6px; background:var(--card-alt); color:var(--text); font-weight:700; font-size:13px; cursor:pointer;}
+  .tier-chip.active{background:var(--accent); color:#fff; border-color:var(--accent);}
+  .rt-grid-j{grid-template-columns:1.25fr 1fr 1fr 1fr;}
+  .mode-panel{margin-top:6px;}
+
+  .flow-box{margin:6px 0; border:1px solid var(--line); border-radius:6px; overflow:hidden; background:var(--card);}
+  .fr{display:grid; grid-template-columns:1.3fr 1fr 1fr; gap:4px; padding:4px 8px; border-bottom:1px solid var(--line-soft); font-size:11.5px; align-items:center;}
+  .fr b{text-align:right; font-family:'SF Mono',ui-monospace,Menlo,Consolas,monospace; font-weight:600; font-size:11px; letter-spacing:-.04em;}
+  .fr.fh{background:var(--card-alt); font-weight:700; color:var(--accent-deep);}
+  .fr.fh b{font-family:inherit; font-size:11.5px; letter-spacing:0;}
+  .fr.ft{background:var(--accent-soft); font-weight:700;}
+  .flow-years input{width:70px;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
@@ -471,11 +541,12 @@
       <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
         <button class="mini-btn" onclick="autoCalcClosingCosts()" type="button"><span class="btn-icon">⟳</span>취득세·등기비·인지세 자동계산</button>
       </div>
+      <div class="field"><label>분양권 계약일</label><span class="field-value"><input type="text" class="manual-field" id="contractDate" value="2025-09-14" style="width:96px; text-align:right;"></span></div>
       <div class="field"><label>분양가</label><span class="field-value"><input type="text" inputmode="numeric" class="manual-field" id="balance" value="215700"><span class="unit">만원</span></span></div>
       <div class="field"><label>취득세</label><span class="field-value"><input type="text" inputmode="numeric" id="acqTax" value="7866"><span class="unit">만원</span></span></div>
       <div class="field"><label>등기비</label><span class="field-value"><input type="text" inputmode="numeric" id="regFee" value="2800"><span class="unit">만원</span></span></div>
       <div class="field"><label>인지세</label><span class="field-value"><input type="text" inputmode="numeric" id="stampTax" value="800"><span class="unit">만원</span></span></div>
-      <details class="basis-toggle"><summary>근거</summary><div class="closing-note" id="closingCostNote">취득세·등기비·인지세는 계약금+잔금(총 매매가) 기준 추정치입니다. 실제 고지서·법무사 정산서 금액으로 직접 수정하세요.</div></details>
+      <details class="basis-toggle"><summary>근거</summary><div class="closing-note" id="closingCostNote">취득세·등기비·인지세는 분양가(계약금 포함 총 매매가) 기준 추정치입니다. 실제 고지서·법무사 정산서 금액으로 직접 수정하세요.</div></details>
       <div class="out total"><label>필요자금 합계</label><span class="val" id="oSum1">-</span></div>
     </div>
   </div>
@@ -671,35 +742,6 @@
   </div>
 
   <!-- HERO: 최종 비교 -->
-  <div class="hero">
-    <div class="opt jeonse">
-      <div class="stamp" id="stampJeonse"></div>
-      <div class="opt-label">Bridge Option A</div>
-      <div class="opt-title">전세로 살다 입주할 경우</div>
-      <div class="opt-figure" id="needJeonse">0</div>
-      <div class="opt-sum">
-        <div><span>필요자금 합계</span><b id="sJ1">-</b></div>
-        <div><span>건강보험 추가보험료</span><b id="sJ5">-</b></div>
-        <div><span>세후 매도수익</span><b id="sJ2">-</b></div>
-        <div><span>조달자금</span><b id="sJ3">-</b></div>
-        <div><span>전세기간 이자수익(세후)</span><b id="sJ4">-</b></div>
-      </div>
-    </div>
-    <div class="opt wolse">
-      <div class="stamp" id="stampWolse"></div>
-      <div class="opt-label">Bridge Option B</div>
-      <div class="opt-title">월세로 살다 입주할 경우</div>
-      <div class="opt-figure" id="needWolse">0</div>
-      <div class="opt-sum">
-        <div><span>필요자금 합계</span><b id="sW1">-</b></div>
-        <div><span>건강보험 추가보험료</span><b id="sW5">-</b></div>
-        <div><span>세후 매도수익</span><b id="sW2">-</b></div>
-        <div><span>조달자금</span><b id="sW3">-</b></div>
-        <div><span>월세기간 실제이자수익(세후)</span><b id="sW4">-</b></div>
-      </div>
-    </div>
-  </div>
-
   <!-- SECTION 7: 잔금대출 이자 -->
   <div class="section">
     <div class="section-head">
@@ -759,11 +801,55 @@
     <div class="closing-note">이자만 계산한 금액입니다(원금 상환 제외, 거치식 가정). 실제 상품은 거치기간·상환방식에 따라 달라질 수 있습니다.</div>
   </div>
 
+  <!-- SECTION 8: 입주 전 전세 vs 월세 (공용) -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-head-top">
+        <div class="section-num">08</div>
+        <div class="section-title">입주 전 전세로 살 때 vs 월세로 살 때</div>
+      </div>
+    </div>
+  <div class="hero">
+    <div class="opt jeonse">
+      <div class="stamp" id="stampJeonse"></div>
+      <div class="opt-label">Bridge Option A</div>
+      <div class="opt-title">전세로 살다 입주할 경우</div>
+      <div class="opt-figure" id="needJeonse">0</div>
+      <div class="opt-sum">
+        <div><span>필요자금 합계</span><b id="sJ1">-</b></div>
+        <div><span>건강보험 추가보험료</span><b id="sJ5">-</b></div>
+        <div><span>세후 매도수익</span><b id="sJ2">-</b></div>
+        <div><span>조달자금</span><b id="sJ3">-</b></div>
+        <div><span>전세기간 이자수익(세후)</span><b id="sJ4">-</b></div>
+      </div>
+    </div>
+    <div class="opt wolse">
+      <div class="stamp" id="stampWolse"></div>
+      <div class="opt-label">Bridge Option B</div>
+      <div class="opt-title">월세로 살다 입주할 경우</div>
+      <div class="opt-figure" id="needWolse">0</div>
+      <div class="opt-sum">
+        <div><span>필요자금 합계</span><b id="sW1">-</b></div>
+        <div><span>건강보험 추가보험료</span><b id="sW5">-</b></div>
+        <div><span>세후 매도수익</span><b id="sW2">-</b></div>
+        <div><span>조달자금</span><b id="sW3">-</b></div>
+        <div><span>월세기간 실제이자수익(세후)</span><b id="sW4">-</b></div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+    <div class="field flow-years"><label>자금흐름 기간<small class="block-note">(입주 전 전세·월세로 사는 기간, 직접 수정 가능)</small></label><span class="field-value"><input type="number" min="1" step="1" id="fyN" value="3"><span class="unit">년</span></span></div>
+    <div class="flow-box" id="flowN"></div>
+  </div>
+
   <div class="section">
     <details class="section-collapse">
       <summary class="section-summary">
         <div class="section-head-top">
-          <div class="section-num">08</div>
+          <div class="section-num">09</div>
           <div class="section-title">이자수익에 따른 건강보험료 확인</div>
         </div>
       </summary>
@@ -874,6 +960,60 @@
       · 재산 점수표는 60등급의 복잡한 구조라 이 앱에서는 근사 계산합니다. 경감·조정(농어촌, 장애인 등)은 반영되지 않으므로 실제 고지액과 차이가 날 수 있습니다. 정확한 금액은 국민건강보험공단(1577-1000)에서 확인하세요.
     </div></details>
     </details>
+  </div>
+
+  <!-- 시나리오 탭: 공용(01~07) 아래 -->
+  <div class="mode-tabs" id="modeTabs">
+    <button type="button" data-mode="none">입주</button>
+    <button type="button" data-mode="jeonse">전세전환</button>
+    <button type="button" data-mode="wolse">월세전환</button>
+  </div>
+  <select id="leaseMode" style="display:none"><option value="none">none</option><option value="jeonse">jeonse</option><option value="wolse">wolse</option></select>
+  <select id="jTier" style="display:none"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select>
+
+  <div class="mode-panel section" id="panelNone">
+    <div class="section-head"><div class="section-head-top"><div class="section-num">입주</div><div class="section-title">입주 후 부족액 대출 현금흐름</div></div></div>
+    <div class="mode-desc">입주 시점에 모자란 금액을 대출로 채웠을 때, 입주 후 N년 동안의 현금흐름입니다(이자만 내는 거치식 가정).</div>
+    <div class="field flow-years"><label>현금흐름 기간<small class="block-note">(입주 후 기간, 직접 수정 가능)</small></label><span class="field-value"><input type="number" min="1" step="1" id="fyI" value="3"><span class="unit">년</span></span></div>
+    <div class="flow-box" id="flowI"></div>
+  </div>
+
+  <div class="mode-panel section" id="panelJeonse" style="display:none">
+    <div class="section-head"><div class="section-head-top"><div class="section-num">전세</div><div class="section-title">전세전환 (입주하지 않고 전세로 내줄 때)</div></div></div>
+    <div class="tier-row"><span>단계 선택</span><button type="button" class="tier-chip" data-tier="1" data-for="jTier">보수</button><button type="button" class="tier-chip" data-tier="2" data-for="jTier">일반</button><button type="button" class="tier-chip" data-tier="3" data-for="jTier">낙관</button></div>
+    <div class="rt-grid rt-grid-j">
+      <div class="rt-labels"><div class="rt-head">&nbsp;</div><div>입주초기 전세가율</div><div>전세 보증금</div></div>
+      <div class="rt-col" id="jCol1"><div class="rt-head">보수</div><div class="rt-in"><input type="number" step="0.5" id="jK1" value="40"><span>%</span></div><div class="rt-out" id="jA1">-</div></div><div class="rt-col" id="jCol2"><div class="rt-head">일반</div><div class="rt-in"><input type="number" step="0.5" id="jK2" value="50"><span>%</span></div><div class="rt-out" id="jA2">-</div></div><div class="rt-col" id="jCol3"><div class="rt-head">낙관</div><div class="rt-in"><input type="number" step="0.5" id="jK3" value="60"><span>%</span></div><div class="rt-out" id="jA3">-</div></div>
+    </div>
+    <div class="out"><label>기준금액(분양가, 계약금 포함)</label><span class="val" id="jBase">-</span></div>
+    <div class="out"><label>전세 보증금(선택 단계)</label><span class="val" id="jDeposit">-</span></div>
+    <div class="out"><label>대출원금(07번 카드)</label><span class="val" id="jLoan">-</span></div>
+    <div class="out"><label>보증금으로 대출 상환 후<small class="block-note">(보증금 − 대출원금)</small></label><span class="val" id="jAfter">-</span></div>
+    <div class="out total"><label>연 대출이자 절감<small class="block-note">(상환 가능한 원금 × 대출금리)</small></label><span class="val" id="jSave">-</span></div>
+    <div class="field flow-years"><label>자금흐름 기간<small class="block-note">(르엘을 내주는 동안 내가 전세·월세로 사는 기간, 직접 수정 가능)</small></label><span class="field-value"><input type="number" min="1" step="1" id="fyJ" value="3"><span class="unit">년</span></span></div>
+    <div class="flow-box" id="flowJ"></div>
+    <div class="closing-note dl-text"></div>
+    <details class="basis-toggle"><summary>근거</summary><div class="closing-note">입주 후 르엘을 전세로 놓아 받는 보증금은 입주 잔금에 쓰는 자금이 아니라, 입주 후 대출을 갚는 데 쓰는 것으로 가정했습니다. 전세 보증금 = 분양가(계약금 포함) × 전세가율. 전세가율은 입주 시점 시세에 따라 달라지므로 입주 직전 주변 시세로 다시 맞추세요.</div></details>
+  </div>
+
+  <div class="mode-panel section" id="panelWolse" style="display:none">
+    <div class="section-head"><div class="section-head-top"><div class="section-num">월세</div><div class="section-title">월세전환 (입주하지 않고 월세로 내줄 때)</div></div></div>
+    <div class="tier-row"><span>단계 선택</span><button type="button" class="tier-chip" data-tier="1" data-for="rentTier">보수</button><button type="button" class="tier-chip" data-tier="2" data-for="rentTier">일반</button><button type="button" class="tier-chip" data-tier="3" data-for="rentTier">낙관</button></div>
+    <div class="rt-grid">
+      <div class="rt-labels"><div class="rt-head">&nbsp;</div><div>입주초기 전세가율</div><div>월세 보증금비율</div><div>월세 전환율(연)</div><div>월세 보증금</div><div>월세(월)</div></div>
+      <div class="rt-col" id="rtCol1"><div class="rt-head">보수</div><div class="rt-in"><input type="number" step="0.5" id="rtK1" value="40"><span>%</span></div><div class="rt-in"><input type="number" step="0.5" id="rtE1" value="8"><span>%</span></div><div class="rt-in"><input type="number" step="0.1" id="rtF1" value="4.5"><span>%</span></div><div class="rt-out" id="rtDA1">-</div><div class="rt-out" id="rtMA1">-</div></div><div class="rt-col" id="rtCol2"><div class="rt-head">일반</div><div class="rt-in"><input type="number" step="0.5" id="rtK2" value="50"><span>%</span></div><div class="rt-in"><input type="number" step="0.5" id="rtE2" value="10"><span>%</span></div><div class="rt-in"><input type="number" step="0.1" id="rtF2" value="5.0"><span>%</span></div><div class="rt-out" id="rtDA2">-</div><div class="rt-out" id="rtMA2">-</div></div><div class="rt-col" id="rtCol3"><div class="rt-head">낙관</div><div class="rt-in"><input type="number" step="0.5" id="rtK3" value="60"><span>%</span></div><div class="rt-in"><input type="number" step="0.5" id="rtE3" value="12"><span>%</span></div><div class="rt-in"><input type="number" step="0.1" id="rtF3" value="5.5"><span>%</span></div><div class="rt-out" id="rtDA3">-</div><div class="rt-out" id="rtMA3">-</div></div>
+    </div>
+    <select id="rentTier" style="display:none"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select>
+    <div class="out"><label>기준금액(분양가, 계약금 포함)</label><span class="val" id="wBase">-</span></div>
+    <div class="out"><label>월세 보증금(선택 단계)</label><span class="val" id="wDeposit">-</span></div>
+    <div class="out"><label>월세 수입(월)</label><span class="val" id="wRent">-</span></div>
+    <div class="out"><label>보증금으로 대출 일부 상환 후 잔여 대출<small class="block-note">(대출원금 − 월세 보증금)</small></label><span class="val" id="wRemain">-</span></div>
+    <div class="out"><label>잔여 대출 월이자</label><span class="val" id="wInt">-</span></div>
+    <div class="out total"><label>월 순수익<small class="block-note">(월세 − 잔여 대출 월이자)</small></label><span class="val" id="wNet">-</span></div>
+    <div class="field flow-years"><label>자금흐름 기간<small class="block-note">(르엘을 내주는 동안 내가 전세·월세로 사는 기간, 직접 수정 가능)</small></label><span class="field-value"><input type="number" min="1" step="1" id="fyW" value="3"><span class="unit">년</span></span></div>
+    <div class="flow-box" id="flowW"></div>
+    <div class="closing-note dl-text"></div>
+    <details class="basis-toggle"><summary>근거</summary><div class="closing-note">월세 보증금 = 분양가(계약금 포함) × 보증금비율, 월세 = (전세가율 기준 전세가 − 월세 보증금) × 전환율 ÷ 12. 보증금은 입주 잔금이 아니라 입주 후 대출 일부 상환에 쓰는 것으로 가정했습니다. 전환율은 법정 상한(기준금리+2%)을 넘을 수 없습니다.</div></details>
   </div>
 
   <footer>
@@ -987,7 +1127,7 @@ function fmtEok(n){
 const STORAGE_KEY = 'reol-fund-sim-v1';
 const INPUT_IDS = ['baseDate','rate','months','acqPrice','salePrice','necExpense','taxFreeLimit',
   'acqDate','holdYears','resideYears','basicDeduction','brokerFee','balance','acqTax','regFee','stampTax',
-  'hireDate','monthlySalary','companyLoan','deposit','cash','severance','otherSale','jeonseAmt','monthlyDeposit','monthlyRent',
+  'contractDate','rtK1','rtE1','rtF1','rtK2','rtE2','rtF2','rtK3','rtE3','rtF3','rentTier','fyN','fyI','fyJ','fyW','jK1','jK2','jK3','jTier','leaseMode','hireDate','monthlySalary','companyLoan','deposit','cash','severance','otherSale','jeonseAmt','monthlyDeposit','monthlyRent',
   'hiY1Self','hiY1Spouse','hiY2Self','hiY2Spouse','hiOtherSelf','hiOtherSpouse','hiSpouseProperty','hiSpouseDeposit',
   'loanPrincipal','loanRateMortgage','loanBankMortgage'];
 
@@ -1336,7 +1476,7 @@ function applyDepositRateOption(index){
 // 취득세 / 등기비 / 인지세 자동계산 (1세대1주택, 국민주택규모 초과 기준 추정치)
 function autoCalcClosingCosts(fromStartup){
   const put = fromStartup ? setAutoValue : forceAutoValue;
-  const P = num('deposit') + num('balance'); // 총 매매가(만원) = 계약금 + 잔금
+  const P = num('balance'); // 총 매매가(만원) = 분양가(계약금 포함)
 
   // 취득세: 6억 이하 1.1% / 6~9억 구간 1.1~3.5% 선형 / 9억 초과 3.5% (지방교육세·농특세 포함 추정 실효세율)
   let acqRate;
@@ -1927,6 +2067,7 @@ function recalc(){
   // ---- 최종 비교 ----
   const hiJ = computeHealthPreview(grossJeonse);       // 건강보험 추가보험료(전세안, 2개년)
   const hiW = computeHealthPreview(grossMonthlyNet);   // 건강보험 추가보험료(월세안, 2개년)
+  window.lastFlowBase = { S: afterTaxProfit, sum1: sum1, sum2: sum2, hiJ: hiJ.extraTotal, hiW: hiW.extraTotal };
   const needJeonse = sum1 + hiJ.extraTotal - afterTaxProfit - sum2 - interestJeonse;
   const needMonthly = sum1 + hiW.extraTotal - afterTaxProfit - sum2 - interestMonthlyNet;
   window.lastNeedJeonse = needJeonse;
@@ -1963,6 +2104,8 @@ function recalc(){
 
   calcHealthInsurance();
   calcLoanInterest();
+  calcLeaseTabs();
+  updateModeTabs();
 }
 
 // "전세안/월세안 이자수익으로 균등 배분" 버튼: 2개년 × 본인/배우자로 4등분해서 시작값으로 채워줌
@@ -2064,6 +2207,169 @@ function updateHealthOptionPreviews(){
     `전세안 적용 시(연 ${fmtEok(j.selfAmt)}/연 ${fmtEok(j.spouseAmt)} 배분) → 본인 추가보험료 2개년 ${fmtEok(j.twoYearSelfPremium)} · 배우자 ${j.spouseOver?'⚠️ 탈락위험':'✅ 유지'}`;
   $('hiWolsePreview').innerHTML =
     `월세안 적용 시(연 ${fmtEok(w.selfAmt)}/연 ${fmtEok(w.spouseAmt)} 배분) → 본인 추가보험료 2개년 ${fmtEok(w.twoYearSelfPremium)} · 배우자 ${w.spouseOver?'⚠️ 탈락위험':'✅ 유지'}`;
+}
+
+// ---- 르엘 임대 시나리오(3단계) ----
+// ---- 시나리오 탭(입주 / 전세전환 / 월세전환): 서로 독립적으로 동작 ----
+function updateModeTabs(){
+  const mode = $('leaseMode').value;
+  document.querySelectorAll('#modeTabs button').forEach(b=>b.classList.toggle('active', b.dataset.mode===mode));
+  $('panelNone').style.display = mode==='none' ? '' : 'none';
+  $('panelJeonse').style.display = mode==='jeonse' ? '' : 'none';
+  $('panelWolse').style.display = mode==='wolse' ? '' : 'none';
+  document.querySelectorAll('.tier-chip').forEach(c=>{
+    c.classList.toggle('active', $(c.dataset.for).value===c.dataset.tier);
+  });
+}
+document.querySelectorAll('#modeTabs button').forEach(b=>b.addEventListener('click',()=>{
+  $('leaseMode').value = b.dataset.mode;
+  updateModeTabs(); saveState();
+}));
+document.querySelectorAll('.tier-chip').forEach(c=>c.addEventListener('click',()=>{
+  $(c.dataset.for).value = c.dataset.tier;
+  recalc(); saveState();
+}));
+
+// ---- 자금흐름(N년): 내가 전세로 살 때 / 월세로 살 때 ----
+function flowCalc(scn, live, N, L, wRentM){
+  const b = window.lastFlowBase || {S:0,sum1:0,sum2:0,hiJ:0,hiW:0};
+  const r = num('rate')/100, tax = 0.154, lr = num('loanRateMortgage')/100;
+  const B = b.S + b.sum2, A = b.sum1;
+  const Dl = live==='J' ? num('jeonseAmt') : num('monthlyDeposit');
+  const rentM = live==='W' ? num('monthlyRent') : 0;
+  const hi = live==='J' ? b.hiJ : b.hiW;
+  const R = {Dl, A, B, hi, rentOut: rentM*12*N};
+  if(scn==='none'){
+    const cash0 = B - Dl;
+    R.interest = Math.max(cash0,0)*r*(1-tax)*N;
+    R.end = cash0 + R.interest - R.rentOut - hi + Dl - A;
+    return R;
+  }
+  const after0 = B - A - Dl;
+  const shortage = Math.max(-after0, 0);
+  const loan = shortage>0 ? Math.ceil(shortage/1000)*1000 + 2000 : 0;
+  let cash = Math.max(after0,0) + (loan>0 ? loan - shortage : 0);
+  const repay = Math.min(L, loan);
+  const loanAfter = loan - repay;
+  cash += (L - repay);
+  const interestY = Math.max(cash,0)*r*(1-tax);
+  const loanIntY = loanAfter*lr;
+  const rentInY = scn==='wolse' ? wRentM*12 : 0;
+  const rentOutY = rentM*12;
+  const hiTotal = hi; // 1~2년차에 걸쳐 2개년 합계 부과
+  const net = (interestY - loanIntY - rentOutY + rentInY)*N - hiTotal;
+  Object.assign(R,{loan, repay, loanAfter, cash, interestY, loanIntY, rentInY, rentOutY, net, L});
+  R.end = cash + net + Dl - loanAfter - L; // 보증금 정산 후 순자금
+  return R;
+}
+function renderFlow(boxId, scn, N, L, wRentM){
+  const J = flowCalc(scn,'J',N,L,wRentM), W = flowCalc(scn,'W',N,L,wRentM);
+  const f = n => fmtEok(n);
+  const row = (lab, a, b, cls) => `<div class="fr ${cls||''}"><span>${lab}</span><b>${a}</b><b>${b}</b></div>`;
+  let h = `<div class="fr fh"><span></span><b>내가 전세로 살 때</b><b>내가 월세로 살 때</b></div>`;
+  if(scn==='none'){
+    h += row('동원가능한 자금', f(J.B), f(W.B));
+    h += row('거주 보증금 지급', '-'+f(J.Dl), '-'+f(W.Dl));
+    h += row(N+'년 예금 이자수익(세후)', '+'+f(J.interest), '+'+f(W.interest));
+    h += row(N+'년 월세 지출', '-', '-'+f(W.rentOut));
+    h += row('건강보험 추가보험료', '-'+f(J.hi), '-'+f(W.hi));
+    h += row('거주 보증금 반환', '+'+f(J.Dl), '+'+f(W.Dl));
+    h += row('입주자금(분양가+세금)', '-'+f(J.A), '-'+f(W.A));
+    const fin = x => x.end>=0 ? f(x.end)+' 여유' : f(-x.end)+' 부족';
+    h += row(N+'년 후 입주 시점 결과', fin(J), fin(W), 'ft');
+  } else {
+    h += row('입주자금(분양가+세금)', f(J.A), f(W.A));
+    h += row('동원가능한 자금', f(J.B), f(W.B));
+    h += row('거주 보증금 지급', '-'+f(J.Dl), '-'+f(W.Dl));
+    h += row('필요 대출', f(J.loan), f(W.loan));
+    h += row('임대 보증금 수령 → 대출 상환', f(J.L)+' → '+f(J.repay), f(W.L)+' → '+f(W.repay));
+    h += row('남은 대출', f(J.loanAfter), f(W.loanAfter));
+    h += row('운용 현금', f(J.cash), f(W.cash));
+    h += row('연 예금 이자수익(세후)', '+'+f(J.interestY), '+'+f(W.interestY));
+    h += row('연 대출이자', '-'+f(J.loanIntY), '-'+f(W.loanIntY));
+    h += row('연 본인 월세 지출', '-', '-'+f(W.rentOutY));
+    if(scn==='wolse') h += row('연 월세 수입', '+'+f(J.rentInY), '+'+f(W.rentInY));
+    h += row('건강보험 추가보험료(2개년)', '-'+f(J.hi), '-'+f(W.hi));
+    h += row(N+'년 누적 손익', f(J.net), f(W.net), 'ft');
+    h += row('보증금 정산 후 순자금(르엘 자산 제외)', f(J.end), f(W.end), 'ft');
+  }
+  $(boxId).innerHTML = h;
+}
+
+// ---- 입주 탭: 입주 후 부족액을 대출했을 때 현금흐름 ----
+function renderLoanFlow(boxId, N){
+  const r = num('rate')/100, tax = 0.154, lr = num('loanRateMortgage')/100;
+  const f = n => fmtEok(n);
+  const calc = need => {
+    const n = need===undefined ? 0 : need;
+    const loan = n>0 ? Math.ceil(n/1000)*1000 + 2000 : 0;
+    const cash = n>0 ? loan - n : -n;               // 대출 여유분 또는 입주 후 남는 여유자금
+    const interestY = Math.max(cash,0)*r*(1-tax);
+    const loanIntY = loan*lr;
+    return {need:n, loan, cash, interestY, loanIntY, netY: interestY-loanIntY};
+  };
+  const J = calc(window.lastNeedJeonse), W = calc(window.lastNeedMonthly);
+  const row = (lab,a,b,cls)=>`<div class="fr ${cls||''}"><span>${lab}</span><b>${a}</b><b>${b}</b></div>`;
+  let h = `<div class="fr fh"><span></span><b>전세로 살다 입주</b><b>월세로 살다 입주</b></div>`;
+  h += row('입주 시점 부족액', J.need>0?f(J.need):'없음(여유 '+f(-J.need)+')', W.need>0?f(W.need):'없음(여유 '+f(-W.need)+')');
+  h += row('대출원금(천만원 절상+2천만)', f(J.loan), f(W.loan));
+  h += row('대출금리(07번 카드)', (lr*100).toFixed(2)+'%', (lr*100).toFixed(2)+'%');
+  h += row('월 대출이자', '-'+f(J.loanIntY/12), '-'+f(W.loanIntY/12));
+  h += row('연 대출이자', '-'+f(J.loanIntY), '-'+f(W.loanIntY));
+  h += row('운용 현금(대출 여유분·여유자금)', f(J.cash), f(W.cash));
+  h += row('연 예금 이자수익(세후)', '+'+f(J.interestY), '+'+f(W.interestY));
+  h += row('연 순현금흐름', f(J.netY), f(W.netY), 'ft');
+  h += row(N+'년 누적 현금흐름', f(J.netY*N), f(W.netY*N), 'ft');
+  h += row(N+'년 후 남은 대출(원금 그대로)', f(J.loan), f(W.loan));
+  $(boxId).innerHTML = h;
+}
+
+function calcLeaseTabs(){
+  const P = num('balance'); // 분양가(계약금 포함)
+  const loan = num('loanPrincipal');
+  const rate = num('loanRateMortgage')/100;
+  // 전세전환
+  const jSel = $('jTier').value;
+  [1,2,3].forEach(t=>{
+    const jr = parseFloat($('jK'+t).value)||0;
+    $('jA'+t).textContent = fmtEok(P*jr/100);
+    $('jCol'+t).querySelectorAll('.rt-head,.rt-out').forEach(e=>e.classList.toggle('rt-sel', String(t)===jSel));
+  });
+  const jDep = P*(parseFloat($('jK'+jSel).value)||0)/100;
+  $('jBase').textContent = fmtEok(P);
+  $('jDeposit').textContent = fmtEok(jDep);
+  $('jLoan').textContent = fmtEok(loan);
+  $('jAfter').textContent = jDep>=loan ? fmtEok(jDep-loan)+' 여유' : fmtEok(loan-jDep)+' 대출 잔여';
+  $('jSave').textContent = fmtEok(Math.min(loan,jDep)*rate);
+  // 월세전환
+  const wSel = $('rentTier').value;
+  [1,2,3].forEach(t=>{
+    const jr = parseFloat($('rtK'+t).value)||0, dr = parseFloat($('rtE'+t).value)||0, cr = parseFloat($('rtF'+t).value)||0;
+    const dep = P*dr/100, monthly = Math.max(P*jr/100 - dep,0)*cr/100/12;
+    $('rtDA'+t).textContent = fmtEok(dep);
+    $('rtMA'+t).textContent = Math.round(monthly).toLocaleString('ko-KR')+'만원';
+    $('rtCol'+t).querySelectorAll('.rt-head,.rt-out').forEach(e=>e.classList.toggle('rt-sel', String(t)===wSel));
+  });
+  const jr = parseFloat($('rtK'+wSel).value)||0, dr = parseFloat($('rtE'+wSel).value)||0, cr = parseFloat($('rtF'+wSel).value)||0;
+  const wDep = P*dr/100, wRent = Math.max(P*jr/100 - wDep,0)*cr/100/12;
+  const remain = Math.max(loan - wDep, 0);
+  const remInt = remain*rate/12;
+  $('wBase').textContent = fmtEok(P);
+  $('wDeposit').textContent = fmtEok(wDep);
+  $('wRent').textContent = Math.round(wRent).toLocaleString('ko-KR')+'만원';
+  $('wRemain').textContent = fmtEok(remain);
+  $('wInt').textContent = Math.round(remInt).toLocaleString('ko-KR')+'만원';
+  $('wNet').textContent = Math.round(wRent-remInt).toLocaleString('ko-KR')+'만원';
+  // 일시적 1주택 기한(계약일 기준 3년)
+  const cd = $('contractDate').value.trim();
+  const m = cd.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  const txt = m ? `종전주택 비과세 참고: 분양권 계약일 ${cd} + 3년 = ${+m[1]+3}-${String(m[2]).padStart(2,'0')}-${String(m[3]).padStart(2,'0')} (분양권 취득일 기준으로 알려져 있으나 세무사 확인 필요)` : '';
+  document.querySelectorAll('.dl-text').forEach(e=>e.textContent=txt);
+  const yr = id => Math.max(parseFloat($(id).value)||0, 0);
+  renderFlow('flowN','none', yr('fyN'), 0, 0);
+  renderLoanFlow('flowI', yr('fyI'));
+  renderFlow('flowJ','jeonse', yr('fyJ'), jDep, 0);
+  renderFlow('flowW','wolse', yr('fyW'), wDep, wRent);
 }
 
 function calcHealthInsurance(){
@@ -2186,6 +2492,7 @@ function calcRegionalPremium(y1Spouse, y2Spouse, selfTotal){
     : '현재 배분에서는 배우자가 피부양자 자격을 유지하므로 지역가입자 보험료가 발생하지 않습니다.';
 }
 
+['leaseMode','rentTier','jTier'].forEach(id=>$(id).addEventListener('change',()=>{ recalc(); saveState(); }));
 DEFAULTS = collectDefaults();   // capture the example values baked into the HTML
 loadState();                     // then overwrite with anything saved from before (오프라인 캐시)
 loadDepositInfoBackup();         // 별도 백업에서도 복원 시도(메인 저장이 비어있을 때 대비)
