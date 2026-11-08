@@ -732,11 +732,6 @@
       </div>
     </div>
 
-    <div class="mini-card compare-card">
-      <h4>전세 대비 비교(월세 선택 시)</h4>
-      <div class="out"><label>전세 대비 실제 추가경비</label><span class="val accent" id="oExtraCost">-</span></div>
-      <div class="out total"><label>월세 실제이자수익(세후, 월세 지출 차감)</label><span class="val" id="oInterestMonthlyNet">-</span></div>
-    </div>
   </div>
 
   <!-- HERO: 최종 비교 -->
@@ -2055,10 +2050,8 @@ function recalc(){
   $('oInterestJeonse').textContent = fmtEok(interestJeonse);
 
   $('oMonthlyCost').textContent = fmtEok(monthlyCost);
-  $('oExtraCost').textContent = fmtEok(extraCost);
   $('oFreeMonthly').textContent = fmtEok(freeMonthly);
   $('oInterestMonthlyRaw').textContent = fmtEok(interestMonthlyRaw);
-  $('oInterestMonthlyNet').textContent = fmtEok(interestMonthlyNet);
 
   // ---- 최종 비교 ----
   const hiJ = computeHealthPreview(grossJeonse);       // 건강보험 추가보험료(전세안, 2개년)
@@ -2293,7 +2286,6 @@ function renderFlow(boxId, scn, N, L, wRentM){
     }
     h += row('건강보험 추가보험료(2개년)', '-'+f(J.hi), '-'+f(W.hi));
     h += row(N+'년 누적 손익', f(J.net), f(W.net), 'ft');
-    h += row('보증금 정산 후 순자금(르엘 자산 제외)', f(J.end), f(W.end), 'ft');
   }
   $(boxId).innerHTML = h;
 }
